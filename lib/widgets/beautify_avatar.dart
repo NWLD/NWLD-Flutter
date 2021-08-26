@@ -31,9 +31,8 @@ class BeautifyAvatar extends StatelessWidget {
             width: 96.w,
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(36.w)),
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/abc/avatar_default.png',
-                image: avatar ?? '',
+              child: Image.asset(
+                'assets/common/avatar_default.png',
                 height: 96.w,
                 width: 96.w,
                 fit: BoxFit.cover,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/models/account_model.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,7 @@ class MyAppState extends State<MyApp> {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: SettingsModel()),
+          ChangeNotifierProvider.value(value: AccountModel()),
         ],
         child: Consumer<SettingsModel>(
           builder: (BuildContext context, appStateModel, Widget child) {

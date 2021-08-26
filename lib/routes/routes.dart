@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kingspro/pages/home.dart';
 
 import '../pages/login.dart';
 import '../pages/splash.dart';
@@ -37,7 +38,7 @@ Route routes(RouteSettings settings) {
     case RouteMap.root:
       return MaterialPageRoute(builder: (context) => SplashPage());
     case RouteMap.home:
-      return MaterialPageRoute(builder: (context) => SplashPage());
+      return MaterialPageRoute(builder: (context) => GameHomePage());
     case RouteMap.game:
       return MaterialPageRoute(
           builder: (context) => SplashPage(), settings: settings);

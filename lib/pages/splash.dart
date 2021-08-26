@@ -50,11 +50,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   }
 
   void toIndex() async {
-    if (StringUtils.isEmpty(SettingsModel.getInstance().account)) {
-      Navigator.pushReplacementNamed(context, RouteMap.login);
-      return;
-    }
-    Navigator.pushReplacementNamed(context, RouteMap.game);
+    Navigator.pushReplacementNamed(context, RouteMap.home);
   }
 
   @override
@@ -75,7 +71,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
           reverseDuration: 500,
           duration: 500,
           child: Image.asset(
-            'assets/abc/splash_icon.png',
+            'assets/splash_icon.png',
             width: 384.w,
             height: 384.w,
           ),

@@ -37,7 +37,7 @@ class ColorConstant {
   static const Color red = Color(0xfffFF3030); //#红色
   static const Color blue = Color.fromRGBO(45, 100, 246, 1);
 
-  static const Color appBackground = Color(0xFF191D29); //背景
+  static const Color appBackground = Color(0xFFff4d4d); //背景
   static const Color title = Color(0xFFFFFFFF); //标题文字颜色
   static const Color des = Color(0xFF656A74); //描述文字颜色
   static const Color teamRuleText = Color(0xFFAAB5C5); //团队规则文字颜色
