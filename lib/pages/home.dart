@@ -4,13 +4,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
-import '../../routes/routes.dart';
 import '../../widgets/beautify_avatar.dart';
-import '../anim/car_path_anim.dart';
 import '../widgets/touch_down_scale.dart';
 
 class GeneralHomeButton extends StatelessWidget {
@@ -116,6 +116,13 @@ class _GameHomePageState extends State<GameHomePage>
     // BottomDialog.showDialog(context, MineDialog());
   }
 
+  showAssets() {
+    if (LoginDialog.shouldShow(context)) {
+      return;
+    }
+    print(AccountModel().decodePrivateKey());
+  }
+
   buildAvatar() {
     return Consumer<AccountModel>(builder: (context, accountModel, child) {
       return Stack(
@@ -150,9 +157,9 @@ class _GameHomePageState extends State<GameHomePage>
                 child: Column(
                   children: [
                     Container(
-                      width: 180.w,
+                      width: 200.w,
                       child: AutoSizeText(
-                        'TODO HT',
+                        accountModel.name ?? "",
                         maxLines: 1,
                         minFontSize: 10,
                         style: TextStyle(
@@ -167,9 +174,9 @@ class _GameHomePageState extends State<GameHomePage>
                       height: 4.w,
                     ),
                     Container(
-                      width: 180.w,
+                      width: 200.w,
                       child: AutoSizeText(
-                        'TODO HT',
+                        StringUtils.simpleAccount(accountModel.account),
                         maxLines: 1,
                         minFontSize: 10,
                         style: TextStyle(
@@ -206,14 +213,12 @@ class _GameHomePageState extends State<GameHomePage>
     );
   }
 
-  buildInviteButton() {
+  buildAssetsButton(AccountModel accountModel) {
     return GeneralHomeButton(
       text: $t('资产'),
       image: 'assets/game/button_invite.png',
       width: 220.w,
-      onTap: () {
-        Navigator.pushNamed(context, RouteMap.team);
-      },
+      onTap: showAssets,
     );
   }
 
@@ -252,7 +257,7 @@ class _GameHomePageState extends State<GameHomePage>
                   flex: 5,
                   child: Container(
                     alignment: AlignmentDirectional.center,
-                    child: buildInviteButton(),
+                    child: buildAssetsButton(accountModel),
                   ),
                 ),
                 Expanded(

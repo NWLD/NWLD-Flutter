@@ -92,4 +92,16 @@ class StringUtils {
   static bool isEmpty(String str) {
     return null == str || "" == str.trim();
   }
+
+  static String simpleAccount(String account) {
+    if (isEmpty(account)) {
+      return "";
+    }
+    if (14 > account.length) {
+      return account;
+    }
+    return account.substring(0, 6) +
+        "****" +
+        account.substring(account.length - 4);
+  }
 }

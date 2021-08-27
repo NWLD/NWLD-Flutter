@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/util/aes_util.dart';
+import 'package:kingspro/util/string_util.dart';
 
 import '../util/cache_util.dart';
 
@@ -19,42 +22,27 @@ class AccountModel extends ChangeNotifier {
     init();
   }
 
-  String locale;
-  bool isDarkMode = false;
-  bool isSoundOn = false; // 由于未知的原因，频繁播放音效会卡，所以先默认不播放音效
-  bool isMusicOn = true;
-
-  // 当 local 和 latest 数据版本不一致的时候，会触发重新登录
-  String localDataVersion = '3';
-  String latestDataVersion = '3';
-
   String account;
+  String name;
+  String privateKey;
 
   init() {
-    Map<String, dynamic> cachedData = CacheUtil.getData(CacheKey.settings);
+    Map<String, dynamic> cachedData = CacheUtil.getData(CacheKey.account);
     if (cachedData != null) {
-      locale = cachedData['locale'];
-      isDarkMode = cachedData['isDarkMode'];
-      isSoundOn = cachedData['isSoundOn'];
-      isMusicOn = cachedData['isMusicOn'];
-      localDataVersion = cachedData['localDataVersion'];
+      name = cachedData['name'];
+      privateKey = cachedData['privateKey'];
       account = cachedData['account'];
     }
-
-    checkDataVersion();
   }
 
   saveState() {
     final data = {
-      'isMusicOn': isMusicOn,
-      'isSoundOn': isSoundOn,
-      'isDarkMode': isDarkMode,
-      'locale': locale,
-      'localDataVersion': localDataVersion,
+      'name': name,
+      'privateKey': privateKey,
       'account': account,
     };
 
-    CacheUtil.setData(CacheKey.settings, data);
+    CacheUtil.setData(CacheKey.account, data);
   }
 
   onStateChanged() {
@@ -62,58 +50,26 @@ class AccountModel extends ChangeNotifier {
     saveState();
   }
 
-  updateIsSoundOn(bool isOn) {
-    if (isSoundOn != isOn) {
-      isSoundOn = isOn;
-      onStateChanged();
-    }
-  }
-
-  updateIsMusicOn(bool isOn) {
-    if (isMusicOn != isOn) {
-      isMusicOn = isOn;
-      onStateChanged();
-    }
-  }
-
-  updateTheme(bool isDark) {
-    if (isDarkMode != isDark) {
-      isDarkMode = isDark;
-      onStateChanged();
-    }
-  }
-
-  updateLocale(String newLocale) {
-    if (newLocale != locale) {
-      locale = locale;
-      onStateChanged();
-    }
-  }
-
-  updateAccount(String _account) {
-    account = _account;
+  updateAccount({String account, String name, String privateKey}) {
+    this.account = account;
+    this.name = name;
+    this.privateKey = privateKey;
     onStateChanged();
   }
 
-  Locale getSelectedLocale() {
-    if (locale == null) return null;
-    var t = locale.split('_');
-    return Locale(t[0], t[1]);
+  String encodePrivateKey(String privateKey) {
+    String pwd = SettingsModel().getPwd();
+    String key = pwd + pwd + pwd + pwd;
+    return AESUtil.encodeBase64(privateKey, key, key);
   }
 
-  supportedLocales() {
-    return [
-      Locale('en', 'US'),
-      Locale('zh', 'CN'),
-    ];
+  String decodePrivateKey() {
+    String pwd = SettingsModel().getPwd();
+    String key = pwd + pwd + pwd + pwd;
+    return AESUtil.decodeBase64(privateKey, key, key);
   }
 
-  // 数据版本，1.0.0版本缓存的数据格式json解析不对，需要清除数据重新登录
-  // 清除用户数据后，启动页会触发重新登录
-  void checkDataVersion() async {
-    if (latestDataVersion != localDataVersion) {
-      localDataVersion = latestDataVersion;
-      onStateChanged();
-    }
+  bool isNull() {
+    return StringUtils.isEmpty(account);
   }
 }

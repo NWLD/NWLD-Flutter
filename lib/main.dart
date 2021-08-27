@@ -41,7 +41,7 @@ class MyAppState extends State<MyApp> {
           ChangeNotifierProvider.value(value: AccountModel()),
         ],
         child: Consumer<SettingsModel>(
-          builder: (BuildContext context, appStateModel, Widget child) {
+          builder: (BuildContext context, settingsModel, Widget child) {
             return ScreenUtilInit(
               designSize: Size(750, 1334),
               builder: () {
@@ -49,11 +49,11 @@ class MyAppState extends State<MyApp> {
                   debugShowCheckedModeBanner: false,
                   theme: ThemeConfig.lightTheme,
                   darkTheme: ThemeConfig.lightTheme,
-                  themeMode: appStateModel.isDarkMode
+                  themeMode: settingsModel.isDarkMode
                       ? ThemeMode.dark
                       : ThemeMode.light,
                   onGenerateTitle: (context) =>
-                      BaseLocalizations.$t('TopRich', context),
+                      BaseLocalizations.$t('KingsPro', context),
                   // locale
                   localizationsDelegates: [
                     BaseLocalizationsDelegate(),
@@ -61,10 +61,10 @@ class MyAppState extends State<MyApp> {
                     GlobalMaterialLocalizations.delegate,
                     GlobalWidgetsLocalizations.delegate,
                   ],
-                  locale: appStateModel.getSelectedLocale(),
-                  supportedLocales: appStateModel.supportedLocales(),
+                  locale: settingsModel.getSelectedLocale(),
+                  supportedLocales: settingsModel.supportedLocales(),
                   localeListResolutionCallback: (locales, supportedLocales) {
-                    final selectedLocale = appStateModel.getSelectedLocale();
+                    final selectedLocale = settingsModel.getSelectedLocale();
 
                     if (selectedLocale != null) {
                       return selectedLocale;

@@ -86,6 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print(address.hexEip55);
     print(await client.getBalance(address));
+    // final client =
+    // Web3Client(SettingsModel().currentChainRpc(), Client());
+    // print(await client.getBalance(address));
     int count = await client.getTransactionCount(credentials.address);
     print(count);
 

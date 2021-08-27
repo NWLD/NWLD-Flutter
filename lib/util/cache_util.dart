@@ -54,15 +54,7 @@ class CacheUtil {
 
 class CacheKey {
   static const String settings = 'settings';
-  static const String userModel = 'userModel';
-  static const String messageModel = 'messageModel';
-  static const String gameConfig = 'gameConfig';
-  static const String accessToken = 'accessToken';
-  static const String gameModel = 'gameModel';
-
+  static const String account = 'account';
   static const String isTest = 'isTest';
   static const String isDebug = 'isDebug';
-
-  static const String doNotRemindBindReferrer = 'doNotRemindBindReferrer';
-  static const String lastTimeShowBindReferrerDialog = 'lastTimeShowBindReferrerDialog';
 }
