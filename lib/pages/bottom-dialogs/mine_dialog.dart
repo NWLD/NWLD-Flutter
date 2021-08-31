@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/settings_model.dart';
-import 'package:kingspro/pages/bottom-dialogs/dividend_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
@@ -274,28 +273,6 @@ class MineDialogState extends State<MineDialog>
     );
   }
 
-  Widget getDividendCar(AccountModel userModel) {
-    return DividendCard(
-      title: $t("我的分红车"),
-      des: $t('已完成 {progress}%', {
-        'progress': 10,
-      }),
-      color: Color(0xFF7D51FC),
-      bottomChild: GradualLinerProgress(
-        width: 350.w,
-        rate: 10 / 100,
-      ),
-      rightWidget: Image.asset(
-        "assets/mine/ic_arrow.png",
-        width: 25.w,
-        height: 24.w,
-      ),
-      onTap: () {
-        Navigator.pushNamed(context, RouteMap.effortDog);
-      },
-    );
-  }
-
   Widget switchItem(String title, bool switchOn, Function onTap) {
     return GestureDetector(
       onTapDown: (ev) {},
@@ -459,11 +436,6 @@ class MineDialogState extends State<MineDialog>
             getPersonalInfoWidget(
               accountModel,
             ),
-            SizedBox(
-              height: 30.w,
-            ),
-            //分红车
-            getDividendCar(accountModel),
             SizedBox(
               height: 30.w,
             ),

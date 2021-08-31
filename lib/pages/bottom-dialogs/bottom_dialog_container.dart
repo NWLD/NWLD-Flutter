@@ -42,7 +42,7 @@ class BottomDialogContainer extends StatelessWidget {
         children: <Widget>[
           buildContent(),
           Positioned(
-            top: 15.w,
+            top: 10.w,
             left: 160.w,
             right: 160.w,
             child: Container(
@@ -53,7 +53,7 @@ class BottomDialogContainer extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color.fromRGBO(208, 230, 249, 1),
-                  fontSize: SizeConstant.h3,
+                  fontSize: SizeConstant.h5,
                   fontFamily: "CarterOne-Regular",
                   height: 1,
                 ),

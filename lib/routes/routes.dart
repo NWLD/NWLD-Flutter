@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kingspro/pages/home.dart';
 
-import '../pages/login.dart';
 import '../pages/splash.dart';
 
 class RouteMap {
@@ -18,7 +17,6 @@ class RouteMap {
   static const teamRules = '/team/rules';
   static const messages = '/messages';
   static const rank = '/rank';
-  static const login = '/login';
   static const settings = '/settings';
   static const mineInviteCode = "/mininvitecode";
 
@@ -50,10 +48,6 @@ Route routes(RouteSettings settings) {
       return CupertinoPageRoute(builder: (context) => SplashPage());
     case RouteMap.guide:
       return MaterialPageRoute(builder: (context) => SplashPage());
-    case RouteMap.login:
-      return MaterialPageRoute(builder: (context) {
-        return LoginPage();
-      });
     case RouteMap.team:
       return CupertinoPageRoute(builder: (context) => SplashPage());
     case RouteMap.teamInvitations:

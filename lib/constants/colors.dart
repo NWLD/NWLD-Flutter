@@ -51,4 +51,14 @@ class ColorConstant {
   static const Color listItemAmount = Color(0xFFFFA800);
   static const Color inviteFriendTitle = Color(0xFFD0E6F9);
   static const Color withdrawAmountTitle = Color(0xFF9A5421);
+
+  static const Color bg_level_1 = Color(0xFF888888);
+  static const Color bg_level_2 = Color(0xFFFFFFFF);
+  static const Color bg_level_3 = Color(0xFF00FF7F);
+  static const Color bg_level_4 = Color(0xFF1E90FF);
+  static const Color bg_level_5 = Color(0xFF8A2BE2);
+  static const Color bg_level_6 = Color(0xFFFF6100);
+  static const Color bg_level_7 = Color(0xFFFFD700);
+  static const Color bg_level_8 = Color(0xFFff4d4d);
+  static const Color bg_level_9 = Color(0xFF292421);
 }

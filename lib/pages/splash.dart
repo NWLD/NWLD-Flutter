@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/colors.dart';
-import '../models/settings_model.dart';
 import '../routes/routes.dart';
-import '../util/string_util.dart';
 import '../widgets/scale_widget.dart';
 import 'base_will_pop_scope.dart';
 

@@ -60,6 +60,7 @@ flutter:
   assets:
     - assets/
     - assets/abi/
+    - assets/card/
     - assets/i18n/
     - assets/cars/
     - assets/riv/
