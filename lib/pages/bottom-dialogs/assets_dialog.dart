@@ -9,7 +9,7 @@ import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import 'bottom_dialog_container.dart';
 
-class HeroItem extends StatelessWidget {
+class HeroItem extends StatefulWidget {
   final int index;
   final HeroInfo heroInfo;
 
@@ -19,8 +19,24 @@ class HeroItem extends StatelessWidget {
   });
 
   @override
+  State<HeroItem> createState() {
+    return _HeroItemState();
+  }
+}
+
+class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
+  HeroInfo heroInfo;
+
+  @override
+  void initState() {
+    heroInfo = widget.heroInfo;
+    HeroService.getHeroInfo(widget.heroInfo.tokenId);
+    HeroService.getHeroFight(widget.heroInfo.tokenId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final $t = create$t(context);
     return Container(
       height: 240.w,
       width: 600.w,
@@ -41,7 +57,7 @@ class HeroItem extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  heroInfo.rare.toString(),
+                  heroInfo.toString(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: SizeConstant.h8,
@@ -79,7 +95,7 @@ class _AssetsDialogState extends State<AssetsDialog>
   void getHeroList() async {
     List<BigInt> heroIds = await HeroService.getHeroIds(
       AccountModel.getInstance().account,
-      0,
+      10,
       0,
     );
     int len = heroIds.length;

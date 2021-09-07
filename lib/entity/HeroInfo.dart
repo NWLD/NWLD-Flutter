@@ -1,4 +1,5 @@
-import 'package:kingspro/util/log_util.dart';
+import 'package:flutter/material.dart';
+import 'package:kingspro/constants/colors.dart';
 
 class HeroInfo {
   static int baseFight = 1000;
@@ -42,7 +43,56 @@ class HeroInfo {
     this.rare = ((tokenId & RARE) >> 72).toInt();
     this.time = ((tokenId & TIME) >> 32).toInt();
     this.no = (tokenId & NO).toInt();
-    LogUtil.log('fromTokenId', tokenId);
+  }
+
+  HeroInfo.fromListData(BigInt tokenId, List<dynamic> list) {
+    this.tokenId = tokenId;
+    this.custom = list[0] as BigInt;
+    this.buffer = (list[1] as BigInt).toInt();
+    this.label = (list[2] as BigInt).toInt();
+    this.who = (list[3] as BigInt).toInt();
+    this.level = (list[4] as BigInt).toInt();
+    this.rare = (list[5] as BigInt).toInt();
+    // this.time = (list[6] as BigInt).toInt();
+    this.no = (list[6] as BigInt).toInt();
+  }
+
+  String rareLabel() {
+    switch (rare) {
+      case 1:
+        return 'N';
+      case 2:
+        return 'R';
+      case 3:
+        return 'SR';
+      case 4:
+        return 'SSR';
+      case 5:
+        return 'UR';
+      case 6:
+        return 'EX';
+      default:
+        return 'UN';
+    }
+  }
+
+  Color rareBg() {
+    switch (rare) {
+      case 1:
+        return ColorConstant.bg_level_3;
+      case 2:
+        return ColorConstant.bg_level_4;
+      case 3:
+        return ColorConstant.bg_level_5;
+      case 4:
+        return ColorConstant.bg_level_6;
+      case 5:
+        return ColorConstant.bg_level_7;
+      case 6:
+        return ColorConstant.bg_level_8;
+      default:
+        return ColorConstant.bg_level_1;
+    }
   }
 
   @override

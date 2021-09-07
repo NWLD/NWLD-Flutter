@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
+import 'package:kingspro/entity/HeroInfo.dart';
 import 'package:kingspro/entity/ShopItem.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/settings_model.dart';
-import 'package:kingspro/pages/bottom-dialogs/open_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/open_hero_dialog.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
-import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:kingspro/web3/Web3Util.dart';
@@ -197,13 +197,39 @@ class _ShopItemState extends State<ShopItemWidget>
           await ContractUtil().abiContract('shop', shopAddress.hex, 'Shop');
       final buyFunction = shopContract.function('buy');
       final patchBuyFunction = shopContract.function('batchBuy');
+
+      //手续费价格
+      print('getGasPrice');
+      EtherAmount gasPrice = await client.getGasPrice();
+      print(gasPrice);
+
+      print('estimateGas');
+      //TODO 账户余额不足会估算手续费失败
+      Transaction transaction = Transaction.callContract(
+        contract: shopContract,
+        function: 1 == num ? buyFunction : patchBuyFunction,
+        from: ownAddress,
+        gasPrice: gasPrice,
+        parameters: 1 == num ? [] : [BigInt.from(num)],
+      );
+      BigInt maxGas = await client.estimateGas(
+        sender: transaction.from,
+        to: transaction.to,
+        data: transaction.data,
+        value: transaction.value,
+        gasPrice: transaction.gasPrice,
+      );
+      //1.1倍估算的gas，避免交易失败
+      maxGas = maxGas * BigInt.from(110) ~/ BigInt.from(100);
+      print(maxGas);
+
+      print('gas');
+      BigInt gas = maxGas * gasPrice.getInWei;
+      print(gas);
+
       String buyHash = await client.sendTransaction(
         credentials,
-        Transaction.callContract(
-          contract: shopContract,
-          function: 1 == num ? buyFunction : patchBuyFunction,
-          parameters: 1 == num ? [] : [BigInt.from(num)],
-        ),
+        transaction,
         chainId: SettingsModel().currentChain().chainId,
       );
       print('buyHash= $buyHash');
@@ -234,18 +260,17 @@ class _ShopItemState extends State<ShopItemWidget>
               params: [ownAddress, BigInt.from(0), BigInt.from(0)],
             );
             List tokenIds = result[0] as List;
-            List<BigInt> heros = <BigInt>[];
+            List<HeroInfo> heroes = <HeroInfo>[];
             int len = tokenIds.length;
             for (int index = len - num; index < len; index++) {
               BigInt id = tokenIds[index] as BigInt;
-              heros.add(id);
+              heroes.add(HeroInfo.fromTokenId(id));
             }
-            LogUtil.log('heros', heros);
             //显示开卡动画
             BottomDialog.showDialog(
                 context,
                 OpenCardDialog(
-                  tokenIds: heros,
+                  heroes: heroes,
                 ));
             return;
           }

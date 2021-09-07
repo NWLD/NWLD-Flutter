@@ -62,17 +62,12 @@ flutter:
     - assets/abi/
     - assets/card/
     - assets/i18n/
-    - assets/cars/
     - assets/riv/
-    - assets/runcars/
     - assets/game/
+    - assets/hero/
     - assets/mine/
-    - assets/lvxingtuan/
-    - assets/withdraw/
     - assets/common/
     - assets/mp3/
-    - assets/json/
-    - assets/review/
     - assets/toast/
 
   # To add assets to your application, add an assets section, like this:
