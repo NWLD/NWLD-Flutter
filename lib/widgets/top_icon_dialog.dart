@@ -118,7 +118,6 @@ class _TopIconDialogState extends State<TopIconDialog> {
                               style: TextStyle(
                                 fontSize: SizeConstant.h4,
                                 color: Colors.white,
-                                fontFamily: "CarterOne-Regular",
                               ),
                             ),
                           ),
@@ -127,7 +126,7 @@ class _TopIconDialogState extends State<TopIconDialog> {
                           if (widget.bottomDesc != null)
                             Text(
                               widget.bottomDesc,
-                              style: TextStyle(color: ColorConstant.notice, fontSize: SizeConstant.h10),
+                              style: TextStyle(color: ColorConstant.des, fontSize: SizeConstant.h10),
                               textAlign: TextAlign.center,
                             ),
                         ],

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
+import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/HeroInfo.dart';
 import 'package:kingspro/entity/ShopItem.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/open_hero_dialog.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
@@ -14,6 +16,7 @@ import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:kingspro/web3/Web3Util.dart';
 import 'package:kingspro/widgets/TimerView.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
+import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:provider/provider.dart';
 import 'package:web3dart/web3dart.dart';
@@ -251,7 +254,7 @@ class _ShopItemState extends State<ShopItemWidget>
             timer.cancel(false);
             final heroContract = await ContractUtil().abiContract(
                 'hero',
-                SettingsModel.getInstance().currentChain().heroNftAddress,
+                ConfigModel.getInstance().config(ConfigConstants.heroNFT),
                 'Hero');
             final tokensOfFunction = heroContract.function('tokensOf');
             List result = await client.call(
@@ -313,7 +316,6 @@ class _ShopItemState extends State<ShopItemWidget>
         style: TextStyle(
           color: Colors.white,
           fontSize: SizeConstant.h8,
-          fontFamily: "CarterOne-Regular",
         ),
       );
     }
@@ -324,22 +326,17 @@ class _ShopItemState extends State<ShopItemWidget>
           onTap: () {
             buy(1);
           },
-          child: Container(
-            height: 56.w,
-            width: 120.w,
-            alignment: AlignmentDirectional.center,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/game/button_red.png'),
-                fit: BoxFit.fill,
-              ),
-            ),
-            child: Text(
-              $t('购买'),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: SizeConstant.h8,
-                fontFamily: "CarterOne-Regular",
+          child: ShadowContainer(
+            width: 100.w,
+            height: 48.w,
+            color: ColorConstant.bg_level_4,
+            child: Center(
+              child: Text(
+                $t('购买'),
+                style: TextStyle(
+                  color: ColorConstant.title,
+                  fontSize: SizeConstant.h9,
+                ),
               ),
             ),
           ),
@@ -352,22 +349,17 @@ class _ShopItemState extends State<ShopItemWidget>
           onTap: () {
             buy(10);
           },
-          child: Container(
-            height: 56.w,
-            width: 120.w,
-            alignment: AlignmentDirectional.center,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/game/button_red.png'),
-                fit: BoxFit.fill,
-              ),
-            ),
-            child: Text(
-              $t('十连'),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: SizeConstant.h8,
-                fontFamily: "CarterOne-Regular",
+          child: ShadowContainer(
+            width: 100.w,
+            height: 48.w,
+            color: ColorConstant.bg_level_7,
+            child: Center(
+              child: Text(
+                $t('10 连'),
+                style: TextStyle(
+                  color: ColorConstant.titleBg,
+                  fontSize: SizeConstant.h8,
+                ),
               ),
             ),
           ),
@@ -381,18 +373,11 @@ class _ShopItemState extends State<ShopItemWidget>
     if (null == _shopItem) {
       return Container();
     }
-    return Container(
+    return ShadowContainer(
       height: 240.w,
       margin: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.w),
       padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-            "assets/game/bg_list_store.png",
-          ),
-          fit: BoxFit.fill,
-        ),
-      ),
+      color: ColorConstant.titleBg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -404,7 +389,6 @@ class _ShopItemState extends State<ShopItemWidget>
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: SizeConstant.h7,
-                    fontFamily: "CarterOne-Regular",
                   ),
                 ),
               ),
@@ -414,7 +398,6 @@ class _ShopItemState extends State<ShopItemWidget>
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: SizeConstant.h7,
-                  fontFamily: "CarterOne-Regular",
                 ),
               ),
             ],
@@ -423,9 +406,8 @@ class _ShopItemState extends State<ShopItemWidget>
           Text(
             _shopItem.des,
             style: TextStyle(
-              color: ColorConstant.teamRuleText,
+              color: ColorConstant.des,
               fontSize: SizeConstant.h9,
-              fontFamily: "CarterOne-Regular",
             ),
           ),
           Expanded(child: Container()),
@@ -439,11 +421,11 @@ class _ShopItemState extends State<ShopItemWidget>
                       fractionDigits: 0,
                     ) +
                     ' ' +
-                    SettingsModel.getInstance().currentChain().gameTokenSymbol,
+                    ConfigModel.getInstance()
+                        .config(ConfigConstants.gameTokenSymbol),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: SizeConstant.h7,
-                  fontFamily: "CarterOne-Regular",
                 ),
               ),
               Expanded(child: Container()),
@@ -505,7 +487,7 @@ class _ShopDialogState extends State<ShopDialog>
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         shopAddressList = [
-          SettingsModel.getInstance().currentChain().shopAddress,
+          ConfigModel.getInstance().config(ConfigConstants.heroShop),
         ];
       });
     });
@@ -522,7 +504,6 @@ class _ShopDialogState extends State<ShopDialog>
     return Consumer<AccountModel>(builder: (context, accountModel, child) {
       return BottomDialogContainer(
         title: $t("礼包"),
-        backgroundImagePath: "assets/game/bg_store.png",
         content: ListView.builder(
           controller: _controller,
           itemCount: shopAddressList.length,

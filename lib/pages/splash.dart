@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../constants/colors.dart';
 import '../routes/routes.dart';
 import '../widgets/scale_widget.dart';
 import 'base_will_pop_scope.dart';
@@ -58,7 +57,6 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       child: Container(
         width: double.infinity,
         height: double.infinity,
-        color: ColorConstant.appBackground,
         alignment: AlignmentDirectional.center,
         child: Scale(
           lowerBound: 0.9,

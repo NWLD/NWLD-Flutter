@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kingspro/constants/chain.dart';
+import 'package:kingspro/entity/chain.dart';
 import 'package:kingspro/util/aes_util.dart';
 import 'package:kingspro/util/common_utils.dart';
 import 'package:kingspro/util/string_util.dart';
@@ -24,14 +24,6 @@ class SettingsModel extends ChangeNotifier {
   }
 
   String locale;
-  bool isDarkMode = false;
-  bool isSoundOn = false; // 由于未知的原因，频繁播放音效会卡，所以先默认不播放音效
-  bool isMusicOn = true;
-
-  // 当 local 和 latest 数据版本不一致的时候，会触发重新登录
-  String localDataVersion = '3';
-  String latestDataVersion = '3';
-
   String chainSymbol;
   String chainRpc;
 
@@ -41,24 +33,15 @@ class SettingsModel extends ChangeNotifier {
     Map<String, dynamic> cachedData = CacheUtil.getData(CacheKey.settings);
     if (cachedData != null) {
       locale = cachedData['locale'];
-      isDarkMode = cachedData['isDarkMode'];
-      isSoundOn = cachedData['isSoundOn'];
-      isMusicOn = cachedData['isMusicOn'];
-      localDataVersion = cachedData['localDataVersion'];
       chainSymbol = cachedData['chainSymbol'];
       chainRpc = cachedData['chainRpc'];
       pwd = cachedData['pwd'];
     }
-    checkDataVersion();
   }
 
   saveState() {
     final data = {
-      'isMusicOn': isMusicOn,
-      'isSoundOn': isSoundOn,
-      'isDarkMode': isDarkMode,
       'locale': locale,
-      'localDataVersion': localDataVersion,
       'chainSymbol': chainSymbol,
       'chainRpc': chainRpc,
       'pwd': pwd,
@@ -70,27 +53,6 @@ class SettingsModel extends ChangeNotifier {
   onStateChanged() {
     notifyListeners();
     saveState();
-  }
-
-  updateIsSoundOn(bool isOn) {
-    if (isSoundOn != isOn) {
-      isSoundOn = isOn;
-      onStateChanged();
-    }
-  }
-
-  updateIsMusicOn(bool isOn) {
-    if (isMusicOn != isOn) {
-      isMusicOn = isOn;
-      onStateChanged();
-    }
-  }
-
-  updateTheme(bool isDark) {
-    if (isDarkMode != isDark) {
-      isDarkMode = isDark;
-      onStateChanged();
-    }
   }
 
   updateLocale(String newLocale) {
@@ -140,14 +102,5 @@ class SettingsModel extends ChangeNotifier {
       Locale('en', 'US'),
       Locale('zh', 'CN'),
     ];
-  }
-
-  // 数据版本，1.0.0版本缓存的数据格式json解析不对，需要清除数据重新登录
-  // 清除用户数据后，启动页会触发重新登录
-  void checkDataVersion() async {
-    if (latestDataVersion != localDataVersion) {
-      localDataVersion = latestDataVersion;
-      onStateChanged();
-    }
   }
 }

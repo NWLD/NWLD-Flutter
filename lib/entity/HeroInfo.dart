@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:kingspro/constants/colors.dart';
 
@@ -93,6 +95,34 @@ class HeroInfo {
       default:
         return ColorConstant.bg_level_1;
     }
+  }
+
+  int getRareBuffer() {
+    switch (rare) {
+      case 1:
+        return 100;
+      case 2:
+        return 120;
+      case 3:
+        return 150;
+      case 4:
+        return 200;
+      case 5:
+        return 400;
+      case 6:
+        return 800;
+      default:
+        return 100;
+    }
+  }
+
+  int getFight() {
+    num fight = baseFight *
+        (100 + buffer) *
+        pow(2, level - 1) *
+        getRareBuffer() /
+        10000;
+    return BigInt.from(fight).toInt();
   }
 
   @override

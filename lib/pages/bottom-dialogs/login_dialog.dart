@@ -73,7 +73,6 @@ class _LoginDialogState extends State<LoginDialog>
         style: TextStyle(
           color: ColorConstant.appBackground,
           fontSize: SizeConstant.h7,
-          fontFamily: 'CarterOne-Regular',
           height: 1.25,
         ),
         decoration: InputDecoration(
@@ -83,7 +82,7 @@ class _LoginDialogState extends State<LoginDialog>
             borderSide: BorderSide.none,
           ),
           hintStyle: TextStyle(
-            color: ColorConstant.teamRuleText,
+            color: ColorConstant.des,
           ),
         ),
       ),
@@ -216,7 +215,6 @@ class _LoginDialogState extends State<LoginDialog>
   Widget build(BuildContext context) {
     return BottomDialogContainer(
       title: $t('登录'),
-      backgroundImagePath: "assets/game/bg_garage.png",
       content: Container(
         child: Column(
           mainAxisSize: MainAxisSize.min,

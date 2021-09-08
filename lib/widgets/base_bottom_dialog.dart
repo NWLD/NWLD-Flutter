@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../constants/sizes.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BottomDialog {
-  static Future<dynamic> showDialog(BuildContext context, Widget content) async {
+  static Future<dynamic> showDialog(
+      BuildContext context, Widget content) async {
     var result = await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -12,13 +12,10 @@ class BottomDialog {
       builder: (context) {
         return FractionallySizedBox(
           heightFactor: 0.9,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(SizeConstant.dialogRadius),
-                topRight: Radius.circular(SizeConstant.dialogRadius),
-              ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.w),
+              topRight: Radius.circular(20.w),
             ),
             child: content,
           ),

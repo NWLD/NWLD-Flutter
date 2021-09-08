@@ -1,11 +1,12 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,14 @@ import 'util/cache_util.dart';
 void main() async {
   Provider.debugCheckInvalidValueType = null;
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: ColorConstant.appBackground,
+    systemNavigationBarDividerColor: Colors.transparent,
+    statusBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.light,
+  ));
   await CacheUtil.init();
   runApp(MyApp());
 }
@@ -38,6 +47,7 @@ class MyAppState extends State<MyApp> {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: SettingsModel()),
+          ChangeNotifierProvider.value(value: ConfigModel()),
           ChangeNotifierProvider.value(value: AccountModel()),
         ],
         child: Consumer<SettingsModel>(
@@ -49,9 +59,7 @@ class MyAppState extends State<MyApp> {
                   debugShowCheckedModeBanner: false,
                   theme: ThemeConfig.lightTheme,
                   darkTheme: ThemeConfig.lightTheme,
-                  themeMode: settingsModel.isDarkMode
-                      ? ThemeMode.dark
-                      : ThemeMode.light,
+                  themeMode: ThemeMode.light,
                   onGenerateTitle: (context) =>
                       BaseLocalizations.$t('KingsPro', context),
                   // locale

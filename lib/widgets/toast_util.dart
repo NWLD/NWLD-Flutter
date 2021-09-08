@@ -159,7 +159,6 @@ class _ToastUIState extends State<ToastUI> with TickerProviderStateMixin {
                       style: TextStyle(
                         color: ColorConstant.title,
                         fontSize: SizeConstant.h10,
-                        fontFamily: 'CarterOne-Regular',
                         height: 1.5,
                       ),
                     )

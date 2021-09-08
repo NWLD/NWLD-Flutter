@@ -82,7 +82,6 @@ class RankCell extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 60.w,
-                        fontFamily: "Facon",
                         color: getRankIndexColor(rankIndex),
                       ),
                     ),
@@ -113,7 +112,6 @@ class RankCell extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: SizeConstant.h7,
-                    fontFamily: "CarterOne-Regular",
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -132,7 +130,6 @@ class RankCell extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontSize: SizeConstant.h7,
-                    fontFamily: "CarterOne-Regular",
                     color: Color.fromRGBO(255, 211, 125, 1),
                   ),
                 ),
@@ -213,7 +210,6 @@ class RankDialogState extends State<RankDialog>
   Widget build(BuildContext context) {
     return BottomDialogContainer(
       title: $t("排行榜"),
-      backgroundImagePath: "assets/game/bg_ranking.png",
       content: Container(
         padding: EdgeInsets.only(
           left: 18.w,
@@ -319,11 +315,11 @@ class RankDialogState extends State<RankDialog>
               Text(
                 titles[index],
                 style: TextStyle(
-                    fontSize: SizeConstant.h8,
-                    color: index == tabIndex
-                        ? Color.fromRGBO(25, 29, 41, 1)
-                        : Color.fromRGBO(25, 29, 41, 0.7),
-                    fontFamily: "CarterOne-Regular"),
+                  fontSize: SizeConstant.h8,
+                  color: index == tabIndex
+                      ? Color.fromRGBO(25, 29, 41, 1)
+                      : Color.fromRGBO(25, 29, 41, 0.7),
+                ),
               ),
               // 底部选中标签
               Positioned(

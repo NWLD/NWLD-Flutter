@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
-import 'package:kingspro/constants/chain.dart';
+import 'package:kingspro/constants/config.dart';
+import 'package:kingspro/entity/chain.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -19,9 +21,9 @@ class ContractUtil {
   }
 
   Future<DeployedContract> gameTokenContract() async {
-    Chain chain = SettingsModel().currentChain();
-    final contract = await ContractUtil()
-        .erc20Contract(chain.gameTokenAddress, chain.gameTokenSymbol);
+    final contract = await ContractUtil().erc20Contract(
+        ConfigModel.getInstance().config(ConfigConstants.gameToken),
+        ConfigModel.getInstance().config(ConfigConstants.gameTokenSymbol));
     return contract;
   }
 

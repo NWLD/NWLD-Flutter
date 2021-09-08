@@ -6,7 +6,7 @@ import 'package:kingspro/constants/sizes.dart';
 import 'package:kingspro/entity/HeroInfo.dart';
 import 'package:kingspro/pages/bottom-dialogs/bottom_dialog_container.dart';
 import 'package:kingspro/widgets/flip.dart';
-import 'package:kingspro/widgets/image.dart';
+import 'package:kingspro/widgets/shadow_container.dart';
 
 import '../../l10n/base_localizations.dart';
 
@@ -33,13 +33,12 @@ class _OpenCardState extends State<OpenCardDialog>
   Widget build(BuildContext context) {
     return BottomDialogContainer(
       title: $t("恭喜获得"),
-      backgroundImagePath: "assets/game/bg_store.png",
       content: GridView(
         padding: EdgeInsets.only(top: 0, bottom: 0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, //每行2个//纵轴(水平)方向间距
-            childAspectRatio: 250 / 325 //纵轴缩���比例
-            ),
+          crossAxisCount: 2,
+          childAspectRatio: 375 / 446,
+        ),
         children: buildItems(),
         physics: AlwaysScrollableScrollPhysics(),
         cacheExtent: 1000,
@@ -53,7 +52,7 @@ class _OpenCardState extends State<OpenCardDialog>
     for (int index = 0; index < len; index++) {
       items.add(
         Padding(
-          padding: EdgeInsets.all(20.w),
+          padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.w),
           child: buildItem(_heroes[index], index),
         ),
       );
@@ -71,50 +70,45 @@ class _OpenCardState extends State<OpenCardDialog>
   }
 
   Widget _buildFront() {
-    return ClipImage(
+    return ShadowContainer(
+      width: 335.w,
+      height: 426.w,
+      color: ColorConstant.bg_level_9,
       key: ValueKey(true),
-      width: 250.w,
-      height: 325.w,
-      radius: 20.w,
-      boxColor: Colors.transparent,
-      url: 'assets/card/card_back.webp',
     );
   }
 
   Widget _buildRear(HeroInfo heroInfo) {
-    return Container(
-      width: 250.w,
-      height: 325.w,
-      decoration: BoxDecoration(
-        color: heroInfo.rareBg(),
-        borderRadius: BorderRadius.circular(20.w),
-      ),
+    return ShadowContainer(
+      width: 335.w,
+      height: 426.w,
+      color: heroInfo.rareBg(),
+      padding: EdgeInsets.all(0),
       key: ValueKey(false),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
             'assets/hero/hero_${heroInfo.who}.png',
-            width: 160.w,
-            height: 160.w,
+            width: 200.w,
+            height: 200.w,
           ),
           Text(
             $t('hero_${heroInfo.who}'),
             style: TextStyle(
               color: Colors.white,
-              fontSize: SizeConstant.h9,
-              fontFamily: "CarterOne-Regular",
+              fontSize: SizeConstant.h8,
             ),
           ),
           SizedBox(
-            height: 6.w,
+            height: 16.w,
           ),
           Text(
             heroInfo.rareLabel(),
             style: TextStyle(
               color: Colors.white,
-              fontSize: SizeConstant.h9,
-              fontFamily: "CarterOne-Regular",
+              fontSize: SizeConstant.h8,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(
@@ -124,19 +118,19 @@ class _OpenCardState extends State<OpenCardDialog>
             heroInfo.level.toString() + "星",
             style: TextStyle(
               color: Colors.white,
-              fontSize: SizeConstant.h9,
-              fontFamily: "CarterOne-Regular",
+              fontSize: SizeConstant.h8,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(
             height: 6.w,
           ),
           Text(
-            "战力加成" + heroInfo.buffer.toString() + "%",
+            heroInfo.getFight().toString() + " 战力",
             style: TextStyle(
               color: Colors.white,
-              fontSize: SizeConstant.h9,
-              fontFamily: "CarterOne-Regular",
+              fontSize: SizeConstant.h8,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

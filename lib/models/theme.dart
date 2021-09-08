@@ -38,9 +38,6 @@ class ThemeConfig {
       backgroundColor: background,
       primaryColor: accentColor,
       accentColor: accentColor,
-      textSelectionColor: accentColor,
-      textSelectionHandleColor: accentColor,
-      cursorColor: accentColor,
       toggleableActiveColor: accentColor,
       appBarTheme: AppBarTheme(
         brightness: brightness,
@@ -87,7 +84,6 @@ class ThemeConfig {
       inputDecorationTheme: InputDecorationTheme(
         errorStyle: TextStyle(color: error),
         labelStyle: TextStyle(
-          fontFamily: '',
           fontWeight: FontWeight.w600,
           fontSize: 16.0,
           color: primaryText.withOpacity(0.5),
@@ -98,7 +94,6 @@ class ThemeConfig {
           fontWeight: FontWeight.w300,
         ),
       ),
-      fontFamily: '',
       textTheme: TextTheme(
         headline1: baseTextTheme.headline1.copyWith(
           color: primaryText,
@@ -170,29 +165,29 @@ class ThemeConfig {
 
   static ThemeData get lightTheme => createTheme(
         brightness: Brightness.light,
-        background: ColorConstant.lightBackground,
-        cardBackground: ColorConstant.secondaryAppColor,
+        background: ColorConstant.appBackground,
+        cardBackground: ColorConstant.appBackground,
         primaryText: Colors.black,
         secondaryText: Colors.white,
-        accentColor: ColorConstant.secondaryAppColor,
-        divider: ColorConstant.secondaryAppColor,
+        accentColor: ColorConstant.appBackground,
+        divider: ColorConstant.appBackground,
         buttonBackground: Colors.black38,
-        buttonText: ColorConstant.secondaryAppColor,
-        disabled: ColorConstant.secondaryAppColor,
+        buttonText: ColorConstant.appBackground,
+        disabled: ColorConstant.appBackground,
         error: Colors.red,
       );
 
   static ThemeData get darkTheme => createTheme(
         brightness: Brightness.dark,
-        background: ColorConstant.darkBackground,
-        cardBackground: ColorConstant.darkSecondaryAppColor,
+        background: ColorConstant.appBackground,
+        cardBackground: ColorConstant.appBackground,
         primaryText: Colors.white,
         secondaryText: Colors.black,
-        accentColor: ColorConstant.darkSecondaryAppColor,
+        accentColor: ColorConstant.appBackground,
         divider: Colors.black45,
         buttonBackground: Colors.white,
-        buttonText: ColorConstant.darkSecondaryAppColor,
-        disabled: ColorConstant.darkSecondaryAppColor,
+        buttonText: ColorConstant.appBackground,
+        disabled: ColorConstant.appBackground,
         error: Colors.red,
       );
 }

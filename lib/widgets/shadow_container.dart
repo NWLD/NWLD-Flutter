@@ -6,6 +6,8 @@ class ShadowContainer extends StatelessWidget {
   final double height;
   final Color color;
   final Widget child;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
 
   ShadowContainer({
     Key key,
@@ -13,6 +15,8 @@ class ShadowContainer extends StatelessWidget {
     @required this.height,
     @required this.color,
     @required this.child,
+    this.padding,
+    this.margin,
   }) : super(key: key);
 
   @override
@@ -20,18 +24,12 @@ class ShadowContainer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      padding:
-          EdgeInsets.only(left: 20.w, right: 20.w, top: 10.w, bottom: 10.w),
+      margin: margin ?? EdgeInsets.all(0),
+      padding: padding ?? EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16.w),
         boxShadow: [
-          BoxShadow(
-            color: Color(0x9C000000),
-            offset: Offset(0, 6.w),
-            blurRadius: 0,
-            spreadRadius: 0,
-          ),
           BoxShadow(
             color: Color(0xFF202736),
             offset: Offset(0, 4.w),

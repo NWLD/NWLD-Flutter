@@ -74,7 +74,6 @@ class MineDialogState extends State<MineDialog>
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: SizeConstant.h3,
-                          fontFamily: "CarterOne-Regular",
                         ),
                       ),
                     ),
@@ -85,7 +84,6 @@ class MineDialogState extends State<MineDialog>
                         style: TextStyle(
                           color: Color.fromRGBO(170, 181, 197, 1),
                           fontSize: SizeConstant.h9,
-                          fontFamily: "CarterOne-Regular",
                         ),
                       ),
                     ),
@@ -129,7 +127,6 @@ class MineDialogState extends State<MineDialog>
                   style: TextStyle(
                     color: Color.fromRGBO(170, 181, 197, 1),
                     fontSize: SizeConstant.h9,
-                    fontFamily: "CarterOne-Regular",
                   ),
                 ),
                 Text(
@@ -138,7 +135,6 @@ class MineDialogState extends State<MineDialog>
                   style: TextStyle(
                     color: subTitleColor,
                     fontSize: 34.w,
-                    fontFamily: "CarterOne-Regular",
                   ),
                 ),
               ],
@@ -177,7 +173,7 @@ class MineDialogState extends State<MineDialog>
           formatItemCell(
             $t("我的钱包"),
             '',
-            ColorConstant.golden,
+            ColorConstant.title,
             RouteMap.wallet,
           ),
           SizedBox(
@@ -189,7 +185,7 @@ class MineDialogState extends State<MineDialog>
           formatItemCell(
             $t("邀请收益"),
             '',
-            ColorConstant.golden,
+            ColorConstant.title,
             RouteMap.team,
           ),
         ],
@@ -218,54 +214,13 @@ class MineDialogState extends State<MineDialog>
           formatItemCell(
             $t("我的邀请码"),
             '',
-            ColorConstant.golden,
+            ColorConstant.title,
             RouteMap.mineInviteCode,
           ),
           SizedBox(
             child: Container(
               height: 2.w,
               color: Colors.black,
-            ),
-          ),
-          GestureDetector(
-            onTapDown: (ev) {},
-            onTap: () {
-              RouteUtils.openWebview(
-                context,
-                UrlConstant.channelPartner,
-                $t("渠道合伙人"),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 30.w,
-                right: 30.w,
-                top: 30.w,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    $t("渠道合伙人"),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Color.fromRGBO(208, 230, 249, 1),
-                      fontSize: 34.w,
-                      fontFamily: "CarterOne-Regular",
-                    ),
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      child: Container(),
-                    ),
-                  ),
-                  Image.asset(
-                    "assets/mine/ic_arrow.png",
-                    width: 25.w,
-                    height: 24.w,
-                  )
-                ],
-              ),
             ),
           ),
         ],
@@ -287,7 +242,6 @@ class MineDialogState extends State<MineDialog>
               style: TextStyle(
                 color: Color.fromRGBO(208, 230, 249, 1),
                 fontSize: 34.w,
-                fontFamily: "CarterOne-Regular",
               ),
             ),
             SizedBox(
@@ -329,24 +283,7 @@ class MineDialogState extends State<MineDialog>
       ),
       child: Row(
         children: <Widget>[
-          switchItem(
-            $t("音效"),
-            settingsModel.isSoundOn,
-            () {
-              settingsModel
-                  .updateIsSoundOn(settingsModel.isSoundOn ? false : true);
-            },
-          ),
-          Expanded(child: SizedBox()),
-          switchItem(
-            $t("音乐"),
-            settingsModel.isMusicOn,
-            () {
-              // 先设置，后更新，不然会反了
-              // AppAudioPlayerManager.switchBackGroundMusic(!appStateModel.isMusicOn);
-              settingsModel.updateIsMusicOn(!settingsModel.isMusicOn);
-            },
-          ),
+
         ],
       ),
     );
@@ -371,7 +308,6 @@ class MineDialogState extends State<MineDialog>
           decoration: TextDecoration.underline,
           color: Colors.black,
           fontSize: SizeConstant.h10,
-          fontFamily: "CarterOne-Regular",
         ),
       ),
     );
@@ -388,24 +324,6 @@ class MineDialogState extends State<MineDialog>
             children: <Widget>[
               Expanded(
                 child: SizedBox(),
-              ),
-              linkItem(
-                $t("帮助"),
-                UrlConstant.helpCenter,
-              ),
-              SizedBox(
-                width: 20.w,
-              ),
-              linkItem(
-                $t("用户协议"),
-                UrlConstant.userProtocol,
-              ),
-              SizedBox(
-                width: 20.w,
-              ),
-              linkItem(
-                $t("隐私协议"),
-                UrlConstant.userPrivacy,
               ),
               Expanded(child: SizedBox()),
             ],
@@ -424,7 +342,6 @@ class MineDialogState extends State<MineDialog>
         builder: (context, accountModel, settingsModel, child) {
       return BottomDialogContainer(
         title: $t("我的"),
-        backgroundImagePath: "assets/game/bg_account.png",
         content: ListView(
           padding: EdgeInsets.only(
             left: 20.w,

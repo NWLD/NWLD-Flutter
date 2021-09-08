@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kingspro/constants/chain.dart';
+import 'package:kingspro/constants/config.dart';
+import 'package:kingspro/entity/chain.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/aes_util.dart';
 import 'package:kingspro/util/string_util.dart';
@@ -83,8 +85,8 @@ class AccountModel extends ChangeNotifier {
     Chain chain = SettingsModel().currentChain();
     gameTokenBalance = await TokenUtil.getERC20Balance(
       account,
-      chain.gameTokenAddress,
-      chain.gameTokenSymbol,
+      ConfigModel.getInstance().config(ConfigConstants.gameToken),
+      ConfigModel.getInstance().config(ConfigConstants.gameTokenSymbol),
     );
     notifyListeners();
   }

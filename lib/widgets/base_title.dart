@@ -31,7 +31,6 @@ class TitleWidget {
                 style: TextStyle(
                   fontSize: SizeConstant.h7,
                   color: ColorConstant.title,
-                  fontFamily: 'CarterOne-Regular',
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -68,7 +67,6 @@ class TitleWidget {
                     style: TextStyle(
                       fontSize: SizeConstant.h7,
                       color: ColorConstant.title,
-                      fontFamily: 'CarterOne-Regular',
                     ),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,

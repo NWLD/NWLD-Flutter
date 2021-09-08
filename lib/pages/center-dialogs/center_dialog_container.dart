@@ -33,7 +33,6 @@ class RewardCenterContainer extends StatelessWidget {
               style: TextStyle(
                 color: Color(0xFFDBBFDE),
                 fontSize: SizeConstant.h7,
-                fontFamily: "CarterOne-Regular",
               ),
             ),
           Container(
@@ -68,7 +67,6 @@ class RewardCenterContainer extends StatelessWidget {
                     style: TextStyle(
                       color: Color(0xFFFFFFFF),
                       fontSize: SizeConstant.h7,
-                      fontFamily: "CarterOne-Regular",
                     ),
                   ),
                 ),
@@ -82,7 +80,6 @@ class RewardCenterContainer extends StatelessWidget {
               style: TextStyle(
                 color: Color(0xFFDBBFDE),
                 fontSize: SizeConstant.h7,
-                fontFamily: "CarterOne-Regular",
               ),
             )
         ],

@@ -73,7 +73,6 @@ class TimerViewState extends State<TimerView> {
       style: TextStyle(
         color: widget.color,
         fontSize: SizeConstant.h7,
-        fontFamily: "Barlow-SemiBold",
         fontWeight: FontWeight.w600,
       ),
     );
