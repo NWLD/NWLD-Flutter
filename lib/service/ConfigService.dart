@@ -41,6 +41,8 @@ class ConfigService {
         (addressList[4] as EthereumAddress).hexEip55;
     map[ConfigConstants.simpleGame] =
         (addressList[5] as EthereumAddress).hexEip55;
+    map[ConfigConstants.talkingRoom] =
+        '0xb0aE4015124E6459D6510A190d754EeEe3ea3605';
     LogUtil.log('getConfigs', map);
     return map;
   }

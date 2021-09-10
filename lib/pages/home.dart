@@ -12,6 +12,7 @@ import 'package:kingspro/pages/bottom-dialogs/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/shop_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
 import 'package:kingspro/pages/game/game1_dialog.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
@@ -97,6 +98,10 @@ class _GameHomePageState extends State<GameHomePage>
 
   showRank() {
     // BottomDialog.showDialog(context, RankDialog());
+  }
+
+  showTalking() {
+    BottomDialog.showDialog(context, TalkingDialog());
   }
 
   showPersonalCenter() {
@@ -279,6 +284,7 @@ class _GameHomePageState extends State<GameHomePage>
         children: [
           buildTab($t('商店'), showShop),
           buildTab($t('背包'), showAssets),
+          buildTab($t('聊天'), showTalking),
           buildTab($t('排行榜'), showRank),
         ],
       ),

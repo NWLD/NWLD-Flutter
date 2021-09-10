@@ -21,55 +21,58 @@ class BottomDialogContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 750.w,
-      height: double.maxFinite,
-      decoration: BoxDecoration(color: bgColor ?? ColorConstant.appBackground),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: 750.w,
-            height: 100.w,
-            decoration: BoxDecoration(
-              color: titleBgColor ?? Colors.pink,
-            ),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(
-                    left: 160.w,
-                    right: 160.w,
-                  ),
-                  child: AutoSizeText(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: SizeConstant.h5,
-                      height: 1,
+    return Scaffold(
+      body: Container(
+        width: 750.w,
+        height: double.maxFinite,
+        decoration:
+            BoxDecoration(color: bgColor ?? ColorConstant.appBackground),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: 750.w,
+              height: 100.w,
+              decoration: BoxDecoration(
+                color: titleBgColor ?? Colors.pink,
+              ),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(
+                      left: 160.w,
+                      right: 160.w,
                     ),
-                    minFontSize: 1,
-                    maxLines: 1,
+                    child: AutoSizeText(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: SizeConstant.h5,
+                        height: 1,
+                      ),
+                      minFontSize: 1,
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-                //关闭按钮
-                buildImageButton(
-                  context: context,
-                  image: "assets/game/ic_close.png",
-                  left: 0,
-                ),
-              ],
+                  //关闭按钮
+                  buildImageButton(
+                    context: context,
+                    image: "assets/game/ic_close.png",
+                    left: 0,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 40.w,
-          ),
-          Expanded(child: content),
-        ],
+            SizedBox(
+              height: 40.w,
+            ),
+            Expanded(child: content),
+          ],
+        ),
       ),
     );
   }

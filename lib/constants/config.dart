@@ -1,12 +1,13 @@
 class ConfigConstants {
   //TODO 需要在Config合约中设置以下合约
-  static String gameToken = 'gameToken'; //游戏代币的合约地址
   static String cashier = 'cashier'; //收款地址
+  static String gameToken = 'gameToken'; //游戏代币的合约地址
   static String heroNFT = 'heroNFT'; //Hero合约地址
   static String heroShop = 'heroShop'; //Hero购买合约地址
   static String statistics = 'statistics'; //Data统计的合约地址
   static String tokenPool = 'tokenPool'; //资金池的合约地址
   static String simpleGame = 'simpleGame'; //前3个游戏合约，共用
+  static String talkingRoom = 'talkingRoom'; //聊天室合约地址
 
   //TODO 以下是统计的标签
   static String buyHeroCost = 'buyHeroCost'; //购买英雄消费
