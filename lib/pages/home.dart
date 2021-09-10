@@ -80,7 +80,7 @@ class _GameHomePageState extends State<GameHomePage>
       case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
         break;
       case AppLifecycleState.resumed: // 应用程序可见，前台
-        AccountModel().getBalance();
+        ConfigModel.getInstance().refresh();
         break;
       case AppLifecycleState.paused: // 应用程序不可见，后台
         break;
@@ -299,7 +299,12 @@ class _GameHomePageState extends State<GameHomePage>
           ),
           child: TouchDownScale(
             onTap: () {
-              BottomDialog.showDialog(context, Game1Dialog());
+              BottomDialog.showDialog(
+                context,
+                Game1Dialog(
+                  difficulty: index + 1,
+                ),
+              );
             },
             child: ShadowContainer(
               width: null,

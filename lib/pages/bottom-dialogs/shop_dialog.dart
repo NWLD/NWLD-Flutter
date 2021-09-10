@@ -224,12 +224,10 @@ class _ShopItemState extends State<ShopItemWidget>
         gasPrice: transaction.gasPrice,
       );
       //1.1倍估算的gas，避免交易失败
-      maxGas = maxGas * BigInt.from(110) ~/ BigInt.from(100);
+      maxGas = maxGas * BigInt.from(120) ~/ BigInt.from(100);
       print(maxGas);
 
-      print('gas');
-      BigInt gas = maxGas * gasPrice.getInWei;
-      print(gas);
+      transaction = transaction.copyWith(maxGas: maxGas.toInt());
 
       String buyHash = await client.sendTransaction(
         credentials,

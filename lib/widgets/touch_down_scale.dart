@@ -98,7 +98,7 @@ class _TouchDownScaleState extends State<TouchDownScale>
   @override
   Widget build(BuildContext context) {
     return Listener(
-      behavior: HitTestBehavior.translucent,
+      // behavior: HitTestBehavior.translucent,
       onPointerDown: (event) {
         pointerUp = false;
         isHalfDone = false;

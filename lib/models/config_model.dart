@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/service/ConfigService.dart';
 
 class ConfigModel extends ChangeNotifier {
@@ -19,9 +20,14 @@ class ConfigModel extends ChangeNotifier {
 
   Map<String, String> _configMap = {};
 
-  _init() async {
+  _init() {
+    refresh();
+  }
+
+  void refresh() async {
     Map<String, String> configs = await ConfigService.getConfigs();
     updateConfig(configs);
+    AccountModel.getInstance().getBalance();
   }
 
   updateConfig(Map<String, String> map) {

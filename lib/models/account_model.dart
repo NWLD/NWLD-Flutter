@@ -39,7 +39,6 @@ class AccountModel extends ChangeNotifier {
       privateKey = cachedData['privateKey'];
       account = cachedData['account'];
     }
-    getBalance();
   }
 
   saveState() {
