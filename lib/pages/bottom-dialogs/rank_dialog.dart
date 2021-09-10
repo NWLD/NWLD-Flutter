@@ -6,7 +6,6 @@ import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import '../../util/game_utils.dart';
-import '../../widgets/base_avatar.dart';
 import 'bottom_dialog_container.dart';
 
 class RankCell extends StatelessWidget {
@@ -94,10 +93,6 @@ class RankCell extends StatelessWidget {
                 alignment: Alignment.center,
                 width: 65.w,
                 height: 65.w,
-                child: BaseAvatar(
-                  avatar: avatar,
-                  size: 70.w,
-                ),
               ),
               Container(
                 margin: EdgeInsets.only(

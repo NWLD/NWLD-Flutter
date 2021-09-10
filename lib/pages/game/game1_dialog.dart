@@ -275,6 +275,7 @@ class _Game1DialogState extends State<Game1Dialog>
                                 'assets/hero/hero_${_fightHero.heroInfo.who}.png',
                                 width: 200.w,
                                 height: 200.w,
+                                fit: BoxFit.fill,
                               ),
                               Text(
                                 $t('hero_${_fightHero.heroInfo.who}'),

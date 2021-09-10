@@ -61,7 +61,7 @@ class BottomDialogContainer extends StatelessWidget {
                   //关闭按钮
                   buildImageButton(
                     context: context,
-                    image: "assets/game/ic_close.png",
+                    image: "assets/common/ic_close.png",
                     left: 0,
                   ),
                 ],

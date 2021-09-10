@@ -58,16 +58,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/
     - assets/abi/
-    - assets/card/
     - assets/i18n/
-    - assets/riv/
-    - assets/game/
     - assets/hero/
-    - assets/mine/
     - assets/common/
-    - assets/mp3/
     - assets/toast/
 
   # To add assets to your application, add an assets section, like this:

@@ -61,6 +61,7 @@ class _FightHeroItemState extends State<FightHeroItem>
                   'assets/hero/hero_${fightHero.heroInfo.who}.png',
                   width: 200.w,
                   height: 200.w,
+                  fit: BoxFit.fill,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
