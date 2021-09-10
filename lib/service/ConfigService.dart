@@ -1,5 +1,4 @@
 import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
@@ -9,6 +8,7 @@ import '../web3/Web3Util.dart';
 
 class ConfigService {
   static Future<Map<String, String>> getConfigs() async {
+    LogUtil.log('getConfigs', 'start');
     Map<String, String> map = {};
     final client = Web3Util().web3Client();
     final configContract = await ContractUtil().abiContract('config',
@@ -24,6 +24,8 @@ class ConfigService {
           ConfigConstants.heroNFT,
           ConfigConstants.heroShop,
           ConfigConstants.statistics,
+          ConfigConstants.tokenPool,
+          ConfigConstants.simpleGame
         ]
       ],
     );
@@ -35,6 +37,10 @@ class ConfigService {
         (addressList[2] as EthereumAddress).hexEip55;
     map[ConfigConstants.statistics] =
         (addressList[3] as EthereumAddress).hexEip55;
+    map[ConfigConstants.tokenPool] =
+        (addressList[4] as EthereumAddress).hexEip55;
+    map[ConfigConstants.simpleGame] =
+        (addressList[5] as EthereumAddress).hexEip55;
     LogUtil.log('getConfigs', map);
     return map;
   }

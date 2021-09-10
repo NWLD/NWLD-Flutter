@@ -27,6 +27,7 @@ class BottomDialogContainer extends StatelessWidget {
       decoration: BoxDecoration(color: bgColor ?? ColorConstant.appBackground),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             width: 750.w,
@@ -59,7 +60,7 @@ class BottomDialogContainer extends StatelessWidget {
                 buildImageButton(
                   context: context,
                   image: "assets/game/ic_close.png",
-                  right: 0,
+                  left: 0,
                 ),
               ],
             ),

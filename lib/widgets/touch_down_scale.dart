@@ -25,7 +25,8 @@ class TouchDownScale extends StatefulWidget {
   _TouchDownScaleState createState() => _TouchDownScaleState();
 }
 
-class _TouchDownScaleState extends State<TouchDownScale> with TickerProviderStateMixin {
+class _TouchDownScaleState extends State<TouchDownScale>
+    with TickerProviderStateMixin {
   //动画控制器
   AnimationController controller;
   bool pointerUp = false;
@@ -97,6 +98,7 @@ class _TouchDownScaleState extends State<TouchDownScale> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Listener(
+      behavior: HitTestBehavior.translucent,
       onPointerDown: (event) {
         pointerUp = false;
         isHalfDone = false;

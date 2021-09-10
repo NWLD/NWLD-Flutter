@@ -1,7 +1,5 @@
 import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
 import 'package:kingspro/models/config_model.dart';
-import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:web3dart/web3dart.dart';
@@ -37,38 +35,5 @@ class HeroService {
     }
     LogUtil.log('getHeroIds', heroIds);
     return heroIds;
-  }
-
-  static Future<HeroInfo> getHeroInfo(
-    BigInt id,
-  ) async {
-    final client = Web3Util().web3Client();
-    final heroContract = await ContractUtil().abiContract('hero',
-        ConfigModel.getInstance().config(ConfigConstants.heroNFT), 'Hero');
-    final heroInfoFunction = heroContract.function('heroInfo');
-    List result = await client.call(
-      contract: heroContract,
-      function: heroInfoFunction,
-      params: [id],
-    );
-    HeroInfo heroInfo = HeroInfo.fromListData(id, result);
-    LogUtil.log('getHeroInfo', heroInfo);
-    return heroInfo;
-  }
-
-  static Future<BigInt> getHeroFight(
-    BigInt id,
-  ) async {
-    final client = Web3Util().web3Client();
-    final heroContract = await ContractUtil().abiContract('hero',
-        ConfigModel.getInstance().config(ConfigConstants.heroNFT), 'Hero');
-    final getFightFunction = heroContract.function('getFight');
-    List result = await client.call(
-      contract: heroContract,
-      function: getFightFunction,
-      params: [id],
-    );
-    LogUtil.log('getHeroFight', result[0]);
-    return result[0] as BigInt;
   }
 }

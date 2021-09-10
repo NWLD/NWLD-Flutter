@@ -33,8 +33,6 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
   @override
   void initState() {
     heroInfo = widget.heroInfo;
-    HeroService.getHeroInfo(widget.heroInfo.tokenId);
-    HeroService.getHeroFight(widget.heroInfo.tokenId);
     super.initState();
   }
 

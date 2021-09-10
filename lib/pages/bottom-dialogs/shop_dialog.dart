@@ -84,7 +84,7 @@ class _ShopItemState extends State<ShopItemWidget>
 
   buy(int num) async {
     try {
-      EasyLoading.show();
+      EasyLoading.show(dismissOnTap: true);
       final client = Web3Util().web3Client();
 
       final credentials = await client
@@ -188,13 +188,14 @@ class _ShopItemState extends State<ShopItemWidget>
       await client.dispose();
     } catch (e) {
       ToastUtil.showToast(e.toString());
+    } finally {
       EasyLoading.dismiss();
-    } finally {}
+    }
   }
 
   void buyHero(credentials, ownAddress, int num) async {
     try {
-      EasyLoading.show();
+      EasyLoading.show(dismissOnTap: true);
       final client = Web3Util().web3Client();
       final shopContract =
           await ContractUtil().abiContract('shop', shopAddress.hex, 'Shop');
@@ -292,8 +293,9 @@ class _ShopItemState extends State<ShopItemWidget>
       await client.dispose();
     } catch (e) {
       ToastUtil.showToast(e.toString());
+    } finally {
       EasyLoading.dismiss();
-    } finally {}
+    }
   }
 
   Widget buildBuyButton() {

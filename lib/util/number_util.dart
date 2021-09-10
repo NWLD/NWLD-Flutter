@@ -20,6 +20,18 @@ class NumberUtil {
     return totalDecimal / divideDecimal;
   }
 
+  static Decimal mul({String num1, String num2}) {
+    Decimal num1Decimal = decimal(num: num1);
+    Decimal num2Decimal = decimal(num: num2);
+    return num1Decimal * num2Decimal;
+  }
+
+  static BigInt pow({String num, int exponent}) {
+    Decimal numDecimal = decimal(num: num);
+    Decimal value = numDecimal * (decimal(num: '10').pow(exponent));
+    return BigInt.tryParse(StringUtils.trimZero(value.toStringAsFixed(0)));
+  }
+
   static String divideStr({
     String total,
     String divideNum,

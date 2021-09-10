@@ -15,6 +15,7 @@ class PeriodicTimer {
     PeriodicTimerAction action,
     int maxCount = 1,
     OnPeriodicTimerEnd onEnd,
+    bool firstAction = false,
   }) {
     this.action = action;
     this.onEnd = onEnd;
@@ -31,6 +32,10 @@ class PeriodicTimer {
       this.action();
       count++;
     });
+    if (firstAction) {
+      this.action();
+      count++;
+    }
   }
 
   void cancel(bool max) {

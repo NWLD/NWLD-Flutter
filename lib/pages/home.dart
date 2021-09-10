@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
@@ -10,11 +11,14 @@ import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/shop_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
+import 'package:kingspro/pages/game/game1_dialog.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/web3/Web3Util.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
+import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 import 'package:provider/provider.dart';
 
@@ -119,8 +123,8 @@ class _GameHomePageState extends State<GameHomePage>
           margin: EdgeInsets.only(
             bottom: 60.w,
             top: 40.w,
-            left: 60.w,
-            right: 60.w,
+            left: 40.w,
+            right: 40.w,
           ),
           padding: EdgeInsets.all(20.w),
           color: ColorConstant.homeCardBg,
@@ -138,65 +142,104 @@ class _GameHomePageState extends State<GameHomePage>
                   color: Colors.white,
                 ),
               ),
-              SizedBox(
-                height: 6.w,
-              ),
-              AutoSizeText(
-                accountModel.account,
-                maxLines: 1,
-                minFontSize: 10,
-                style: TextStyle(
-                  fontSize: SizeConstant.h9,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
-                height: 30.w,
-              ),
-              Container(
-                alignment: AlignmentDirectional.center,
-                child: AutoSizeText(
-                  null == accountModel.gameTokenBalance
-                      ? ''
-                      : NumberUtil.decimalNumString(
-                            num: accountModel.gameTokenBalance.toString(),
-                            fractionDigits: 0,
-                          ) +
-                          ' ' +
-                          ConfigModel.getInstance()
-                              .config(ConfigConstants.gameTokenSymbol),
-                  maxLines: 1,
-                  minFontSize: 10,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: SizeConstant.h4,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              TouchDownScale(
+                onTap: () {
+                  ClipboardData data =
+                      new ClipboardData(text: accountModel.account);
+                  Clipboard.setData(data);
+                  ToastUtil.showToast(
+                    $t("已复制"),
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 6.w, bottom: 6.w),
+                  child: AutoSizeText(
+                    accountModel.account,
+                    maxLines: 1,
+                    minFontSize: 10,
+                    style: TextStyle(
+                      fontSize: SizeConstant.h9,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 6.w,
-              ),
-              Container(
-                alignment: AlignmentDirectional.center,
-                child: AutoSizeText(
-                  null == accountModel.balance
-                      ? ''
-                      : NumberUtil.decimalNumString(
-                            num: accountModel.balance.toString(),
-                            fractionDigits: 4,
-                          ) +
-                          ' ' +
-                          SettingsModel().currentChain().symbol,
-                  maxLines: 1,
-                  minFontSize: 10,
-                  style: TextStyle(
-                    fontSize: SizeConstant.h6,
-                    color: Colors.white,
+              Expanded(child: Container()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          // alignment: AlignmentDirectional.center,
+                          child: AutoSizeText(
+                            null == accountModel.balance
+                                ? ''
+                                : NumberUtil.decimalNumString(
+                                      num: accountModel.balance.toString(),
+                                      fractionDigits: 4,
+                                    ) +
+                                    ' ' +
+                                    SettingsModel().currentChain().symbol,
+                            maxLines: 1,
+                            minFontSize: 10,
+                            style: TextStyle(
+                                fontSize: SizeConstant.h5,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 6.w,
+                        ),
+                        Container(
+                          // alignment: AlignmentDirectional.center,
+                          child: AutoSizeText(
+                            null == accountModel.gameTokenBalance
+                                ? ''
+                                : NumberUtil.decimalNumString(
+                                      num: accountModel.gameTokenBalance
+                                          .toString(),
+                                      fractionDigits: 0,
+                                    ) +
+                                    ' ' +
+                                    ConfigConstants.gameTokenSymbol,
+                            maxLines: 1,
+                            minFontSize: 10,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: SizeConstant.h5,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                  TouchDownScale(
+                    child: ShadowContainer(
+                      width: 120.w,
+                      height: 64.w,
+                      color: ColorConstant.titleBg,
+                      child: Center(
+                        child: Text(
+                          $t('兑换'),
+                          style: TextStyle(
+                            color: ColorConstant.title,
+                            fontSize: SizeConstant.h7,
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      BottomDialog.showDialog(context, SwapDialog());
+                    },
+                  ),
+                ],
+              )
             ],
           ),
         );
@@ -251,20 +294,25 @@ class _GameHomePageState extends State<GameHomePage>
         Container(
           margin: EdgeInsets.only(
             bottom: 40.w,
-            left: 30.w,
-            right: 30.w,
+            left: 40.w,
+            right: 40.w,
           ),
-          child: ShadowContainer(
-            width: null,
-            height: 180.w,
-            color: gameLevel.bg,
-            child: Container(
-              alignment: AlignmentDirectional.center,
-              child: Text(
-                gameLevel.title,
-                style: TextStyle(
-                  color: gameLevel.color,
-                  fontSize: SizeConstant.h4,
+          child: TouchDownScale(
+            onTap: () {
+              BottomDialog.showDialog(context, Game1Dialog());
+            },
+            child: ShadowContainer(
+              width: null,
+              height: 180.w,
+              color: gameLevel.bg,
+              child: Container(
+                alignment: AlignmentDirectional.center,
+                child: Text(
+                  gameLevel.title,
+                  style: TextStyle(
+                    color: gameLevel.color,
+                    fontSize: SizeConstant.h4,
+                  ),
                 ),
               ),
             ),
