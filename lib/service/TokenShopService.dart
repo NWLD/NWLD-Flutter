@@ -10,8 +10,8 @@ import 'package:web3dart/web3dart.dart';
 
 import '../web3/Web3Util.dart';
 
-class TokenPoolService {
-  static Future<TokenPoolInfo> getInfo() async {
+class TokenShopService {
+  static Future<TokenPoolInfo> getInfo(int num) async {
     final client = Web3Util().web3Client();
     final contract = await ContractUtil().abiContract(
         'tokenShop',
@@ -21,7 +21,7 @@ class TokenPoolService {
     List result = await client.call(
       contract: contract,
       function: infoFunction,
-      params: [],
+      params: [BigInt.from(num)],
     );
     return TokenPoolInfo(
         result[0] as BigInt, result[1] as BigInt, result[2] as BigInt);

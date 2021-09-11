@@ -24,8 +24,9 @@ class ConfigService {
           ConfigConstants.petNFT,
           ConfigConstants.petShop,
           ConfigConstants.statistics,
-          ConfigConstants.tokenPool,
-          ConfigConstants.simpleGame
+          ConfigConstants.tokenShop,
+          ConfigConstants.simpleGame,
+          ConfigConstants.talkingRoom,
         ]
       ],
     );
@@ -33,16 +34,15 @@ class ConfigService {
     map[ConfigConstants.gameToken] =
         (addressList[0] as EthereumAddress).hexEip55;
     map[ConfigConstants.petNFT] = (addressList[1] as EthereumAddress).hexEip55;
-    map[ConfigConstants.petShop] =
-        (addressList[2] as EthereumAddress).hexEip55;
+    map[ConfigConstants.petShop] = (addressList[2] as EthereumAddress).hexEip55;
     map[ConfigConstants.statistics] =
         (addressList[3] as EthereumAddress).hexEip55;
-    map[ConfigConstants.tokenPool] =
+    map[ConfigConstants.tokenShop] =
         (addressList[4] as EthereumAddress).hexEip55;
     map[ConfigConstants.simpleGame] =
         (addressList[5] as EthereumAddress).hexEip55;
     map[ConfigConstants.talkingRoom] =
-        '0xb0aE4015124E6459D6510A190d754EeEe3ea3605';
+        (addressList[6] as EthereumAddress).hexEip55;
     LogUtil.log('getConfigs', map);
     return map;
   }

@@ -170,9 +170,7 @@ class _AssetsDialogState extends State<AssetsDialog>
 
   void getHeroList() async {
     List<BigInt> heroIds = await HeroService.getHeroIds(
-      AccountModel.getInstance().account,
-      10,
-      0,
+      AccountModel.getInstance().account
     );
     int len = heroIds.length;
     List<PetInfo> heros = <PetInfo>[];

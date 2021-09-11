@@ -34,7 +34,7 @@ class SimpleGameService {
         'simpleGame',
         ConfigModel.getInstance().config(ConfigConstants.simpleGame),
         'simpleGame');
-    final function = contract.function('getFightHeroes');
+    final function = contract.function('getFightPets');
     List result = await client.call(
       contract: contract,
       function: function,

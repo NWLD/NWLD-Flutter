@@ -26,22 +26,22 @@ import '../../l10n/base_localizations.dart';
 import '../../widgets/touch_down_scale.dart';
 import 'bottom_dialog_container.dart';
 
-class ShopItemWidget extends StatefulWidget {
+class TokenShopItemWidget extends StatefulWidget {
   final int index;
   final String shopAddress;
 
-  ShopItemWidget({
+  TokenShopItemWidget({
     this.index,
     this.shopAddress,
   });
 
   @override
-  State<ShopItemWidget> createState() {
+  State<TokenShopItemWidget> createState() {
     return _ShopItemState();
   }
 }
 
-class _ShopItemState extends State<ShopItemWidget>
+class _ShopItemState extends State<TokenShopItemWidget>
     with BaseLocalizationsStateMixin {
   EthereumAddress shopAddress;
   ShopItem _shopItem;
@@ -464,12 +464,12 @@ class _ShopItemState extends State<ShopItemWidget>
   }
 }
 
-class ShopDialog extends StatefulWidget {
+class PetShopDialog extends StatefulWidget {
   @override
-  _ShopDialogState createState() => _ShopDialogState();
+  _PetShopDialogState createState() => _PetShopDialogState();
 }
 
-class _ShopDialogState extends State<ShopDialog>
+class _PetShopDialogState extends State<PetShopDialog>
     with BaseLocalizationsStateMixin {
   List shopAddressList = <String>[];
 
@@ -508,7 +508,7 @@ class _ShopDialogState extends State<ShopDialog>
           controller: _controller,
           itemCount: shopAddressList.length,
           itemBuilder: (context, index) {
-            return ShopItemWidget(
+            return TokenShopItemWidget(
               index: index,
               shopAddress: shopAddressList[index],
             );

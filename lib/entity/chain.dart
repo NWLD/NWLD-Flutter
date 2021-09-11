@@ -41,7 +41,7 @@ class ChainConstant {
     if (CET == symbol) {
       Chain cet = Chain('CoinEx Smart Chain', symbol, 52);
       cet.rpcList = ['https://rpc.coinex.net'];
-      cet.configAddress = '0x1d1825326654ff34bF8799164906DD6eB688526d';
+      cet.configAddress = '0x0D21dF9D4f1e507935187a019eCb9bfdEFEf76fd';
       symbolChainMap[symbol] = cet;
       return cet;
     }

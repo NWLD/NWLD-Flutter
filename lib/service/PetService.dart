@@ -10,8 +10,6 @@ class HeroService {
   //endIndex=0,表示获取全部
   static Future<List<BigInt>> getHeroIds(
     String account,
-    int startIndex,
-    int endIndex,
   ) async {
     final client = Web3Util().web3Client();
     final heroContract = await ContractUtil().abiContract('pet',
@@ -21,9 +19,7 @@ class HeroService {
       contract: heroContract,
       function: tokensOfFunction,
       params: [
-        EthereumAddress.fromHex(account),
-        BigInt.from(startIndex),
-        BigInt.from(endIndex)
+        EthereumAddress.fromHex(account)
       ],
     );
     List tokenIds = result[0] as List;

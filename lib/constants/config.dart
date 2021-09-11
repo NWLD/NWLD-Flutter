@@ -5,7 +5,7 @@ class ConfigConstants {
   static String petNFT = 'petNFT'; //Pet合约地址
   static String petShop = 'petShop'; //Pet购买合约地址
   static String statistics = 'statistics'; //Data统计的合约地址
-  static String tokenPool = 'tokenPool'; //资金池的合约地址
+  static String tokenShop = 'tokenShop'; //代币商店的合约地址
   static String simpleGame = 'simpleGame'; //前3个游戏合约，共用
   static String talkingRoom = 'talkingRoom'; //聊天室合约地址
 

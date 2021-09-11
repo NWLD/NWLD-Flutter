@@ -10,7 +10,7 @@ import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
-import 'package:kingspro/pages/bottom-dialogs/shop_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/pet_shop_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
 import 'package:kingspro/pages/game/game1_dialog.dart';
@@ -91,7 +91,7 @@ class _GameHomePageState extends State<GameHomePage>
   }
 
   showShop() {
-    BottomDialog.showDialog(context, ShopDialog());
+    BottomDialog.showDialog(context, PetShopDialog());
   }
 
   showExchange() {}
