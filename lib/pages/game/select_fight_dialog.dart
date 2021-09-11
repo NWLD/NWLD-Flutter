@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
-import 'package:kingspro/entity/FightHero.dart';
+import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/service/SimpleGameService.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
@@ -11,11 +11,11 @@ import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import '../bottom-dialogs/bottom_dialog_container.dart';
 
-typedef OnFightHeroSelected = void Function(FightHero fightHero);
+typedef OnFightHeroSelected = void Function(FightPet fightHero);
 
 class FightHeroItem extends StatefulWidget {
   final int index;
-  final FightHero fightHero;
+  final FightPet fightHero;
   final OnFightHeroSelected onFightHeroSelected;
 
   FightHeroItem({
@@ -32,7 +32,7 @@ class FightHeroItem extends StatefulWidget {
 
 class _FightHeroItemState extends State<FightHeroItem>
     with BaseLocalizationsStateMixin {
-  FightHero fightHero;
+  FightPet fightHero;
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _FightHeroItemState extends State<FightHeroItem>
             Row(
               children: [
                 Image.asset(
-                  'assets/hero/hero_${fightHero.heroInfo.who}.png',
+                  'assets/pet/pet_${fightHero.heroInfo.who}.png',
                   width: 200.w,
                   height: 200.w,
                   fit: BoxFit.fill,
@@ -67,7 +67,7 @@ class _FightHeroItemState extends State<FightHeroItem>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      $t('hero_${fightHero.heroInfo.who}') +
+                      $t('pet_${fightHero.heroInfo.who}') +
                           " " +
                           fightHero.heroInfo.rareLabel() +
                           " " +
@@ -139,7 +139,7 @@ class SelectFightHeroDialog extends StatefulWidget {
 
 class _SelectFightHeroDialogState extends State<SelectFightHeroDialog>
     with BaseLocalizationsStateMixin {
-  List<FightHero> _heroList = <FightHero>[];
+  List<FightPet> _heroList = <FightPet>[];
 
   ScrollController _controller = ScrollController(
     keepScrollOffset: true,
@@ -152,7 +152,7 @@ class _SelectFightHeroDialogState extends State<SelectFightHeroDialog>
   }
 
   void getHeroList() async {
-    List<FightHero> heroes =
+    List<FightPet> heroes =
         await SimpleGameService.getFightHeroes(widget.difficulty);
     setState(() {
       _heroList = heroes;

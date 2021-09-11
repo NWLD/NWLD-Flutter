@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/sizes.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/pages/bottom-dialogs/bottom_dialog_container.dart';
 import 'package:kingspro/widgets/flip.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
@@ -11,7 +11,7 @@ import 'package:kingspro/widgets/shadow_container.dart';
 import '../../l10n/base_localizations.dart';
 
 class OpenCardDialog extends StatefulWidget {
-  final List<HeroInfo> heroes;
+  final List<PetInfo> heroes;
 
   OpenCardDialog({Key key, this.heroes}) : super(key: key);
 
@@ -21,7 +21,7 @@ class OpenCardDialog extends StatefulWidget {
 
 class _OpenCardState extends State<OpenCardDialog>
     with BaseLocalizationsStateMixin {
-  List _heroes = <HeroInfo>[];
+  List _heroes = <PetInfo>[];
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _OpenCardState extends State<OpenCardDialog>
     return items;
   }
 
-  Widget buildItem(HeroInfo heroInfo, int index) {
+  Widget buildItem(PetInfo heroInfo, int index) {
     return FlipWidget(
       key: ValueKey(index),
       front: _buildFront(),
@@ -78,7 +78,7 @@ class _OpenCardState extends State<OpenCardDialog>
     );
   }
 
-  Widget _buildRear(HeroInfo heroInfo) {
+  Widget _buildRear(PetInfo heroInfo) {
     return ShadowContainer(
       width: 335.w,
       height: 426.w,
@@ -89,12 +89,12 @@ class _OpenCardState extends State<OpenCardDialog>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/hero/hero_${heroInfo.who}.png',
+            'assets/pet/pet_${heroInfo.who}.png',
             width: 200.w,
             height: 200.w,
           ),
           Text(
-            $t('hero_${heroInfo.who}'),
+            $t('pet_${heroInfo.who}'),
             style: TextStyle(
               color: Colors.white,
               fontSize: SizeConstant.h8,

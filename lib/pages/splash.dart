@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/anim/slide_anim.dart';
+import 'package:kingspro/widgets/scale_widget.dart';
 
 import '../routes/routes.dart';
-import '../widgets/scale_widget.dart';
 import 'base_will_pop_scope.dart';
 
 class SplashPage extends StatefulWidget {
@@ -19,7 +20,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   void initState() {
     controller = AnimationController(
       duration: Duration(
-        milliseconds: 3000,
+        milliseconds: 2000,
       ),
       vsync: this,
     );
@@ -58,19 +59,69 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
         width: double.infinity,
         height: double.infinity,
         alignment: AlignmentDirectional.center,
-        child: Scale(
-          lowerBound: 0.9,
-          value: 0.9,
-          repeat: true,
-          start: true,
-          upperBound: 1.1,
-          reverseDuration: 500,
-          duration: 500,
-          child: Image.asset(
-            'assets/splash_icon.png',
-            width: 384.w,
-            height: 384.w,
-          ),
+        child: Stack(
+          children: [
+            Positioned(
+              child: SlideAnim(
+                child: Image.asset(
+                  'assets/pet/pet_1.png',
+                  width: 192.w,
+                  height: 192.w,
+                ),
+                end: Offset(2, 2),
+                begin: Offset(-1, -1),
+                milliseconds: 1000,
+              ),
+              top: 0,
+              left: 0,
+            ),
+            Positioned(
+              child: SlideAnim(
+                child: Image.asset(
+                  'assets/pet/pet_2.png',
+                  width: 192.w,
+                  height: 192.w,
+                ),
+                end: Offset(-2, 2),
+                begin: Offset(1, -1),
+                milliseconds: 1000,
+              ),
+              top: 0,
+              right: 0,
+            ),
+            Positioned(
+              child: SlideAnim(
+                child: Image.asset(
+                  'assets/pet/pet_37.png',
+                  width: 192.w,
+                  height: 192.w,
+                ),
+                end: Offset(0, 3),
+                begin: Offset(0, -1),
+                milliseconds: 1000,
+              ),
+              top: 0,
+              left: 279.w,
+            ),
+            Positioned(
+              bottom: 96.w,
+              left: 279.w,
+              child: Scale(
+                lowerBound: 0.9,
+                value: 0.9,
+                repeat: true,
+                start: true,
+                upperBound: 1.1,
+                reverseDuration: 500,
+                duration: 500,
+                child: Image.asset(
+                  'assets/common/logo.png',
+                  width: 192.w,
+                  height: 192.w,
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

@@ -4,7 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/FightHero.dart';
+import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/entity/FightReward.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/pages/game/fight_result_dialog.dart';
@@ -36,7 +36,7 @@ class Game1Dialog extends StatefulWidget {
 
 class _Game1DialogState extends State<Game1Dialog>
     with BaseLocalizationsStateMixin {
-  FightHero _fightHero;
+  FightPet _fightHero;
   FightReward _fightReward;
   int _fightCount = 1;
 
@@ -272,13 +272,13 @@ class _Game1DialogState extends State<Game1Dialog>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'assets/hero/hero_${_fightHero.heroInfo.who}.png',
+                                'assets/pet/pet_${_fightHero.heroInfo.who}.png',
                                 width: 200.w,
                                 height: 200.w,
                                 fit: BoxFit.fill,
                               ),
                               Text(
-                                $t('hero_${_fightHero.heroInfo.who}'),
+                                $t('pet_${_fightHero.heroInfo.who}'),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: SizeConstant.h8,

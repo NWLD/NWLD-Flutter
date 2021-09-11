@@ -21,8 +21,8 @@ class ConfigService {
       params: [
         [
           ConfigConstants.gameToken,
-          ConfigConstants.heroNFT,
-          ConfigConstants.heroShop,
+          ConfigConstants.petNFT,
+          ConfigConstants.petShop,
           ConfigConstants.statistics,
           ConfigConstants.tokenPool,
           ConfigConstants.simpleGame
@@ -32,8 +32,8 @@ class ConfigService {
     List addressList = result[0] as List;
     map[ConfigConstants.gameToken] =
         (addressList[0] as EthereumAddress).hexEip55;
-    map[ConfigConstants.heroNFT] = (addressList[1] as EthereumAddress).hexEip55;
-    map[ConfigConstants.heroShop] =
+    map[ConfigConstants.petNFT] = (addressList[1] as EthereumAddress).hexEip55;
+    map[ConfigConstants.petShop] =
         (addressList[2] as EthereumAddress).hexEip55;
     map[ConfigConstants.statistics] =
         (addressList[3] as EthereumAddress).hexEip55;

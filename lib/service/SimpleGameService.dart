@@ -1,7 +1,7 @@
 import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/FightHero.dart';
+import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/entity/FightReward.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
@@ -28,7 +28,7 @@ class SimpleGameService {
     return FightReward(result[0] as BigInt, result[1] as BigInt);
   }
 
-  static Future<List<FightHero>> getFightHeroes(int difficulty) async {
+  static Future<List<FightPet>> getFightHeroes(int difficulty) async {
     final client = Web3Util().web3Client();
     final contract = await ContractUtil().abiContract(
         'simpleGame',
@@ -46,14 +46,14 @@ class SimpleGameService {
     List tokenIds = result[0] as List;
     List fightCounts = result[1] as List;
     List fightRates = result[2] as List;
-    List<FightHero> fightHeroes = [];
+    List<FightPet> fightHeroes = [];
     for (int index = 0; index < tokenIds.length; index++) {
       int count = (fightCounts[index] as BigInt).toInt();
       int rate = (fightRates[index] as BigInt).toInt();
       if (count > 0 && rate > 0) {
         fightHeroes.add(
-          FightHero(
-            HeroInfo.fromTokenId(tokenIds[index] as BigInt),
+          FightPet(
+            PetInfo.fromTokenId(tokenIds[index] as BigInt),
             count,
             rate ~/ 100,
           ),

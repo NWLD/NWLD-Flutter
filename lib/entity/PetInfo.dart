@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kingspro/constants/colors.dart';
 
-class HeroInfo {
+class PetInfo {
   static int baseFight = 1000;
 
   // nftSign  custom  buffer   label  who    level   rarity    mintTime   index
@@ -20,7 +20,7 @@ class HeroInfo {
   static BigInt TIME = BigInt.from(0x00FFFFFFFFFF) << 32;
   static BigInt NO = BigInt.from(0x00FFFFFFFF);
 
-  HeroInfo();
+  PetInfo();
 
   BigInt tokenId;
   BigInt custom;
@@ -35,7 +35,7 @@ class HeroInfo {
   // nftSign  custom  buffer   label  who    level   rarity    mintTime   index
   // 1        120     8        16     16     8       8         40         32
   // 255      128     120      104    88     80      72        32         0
-  HeroInfo.fromTokenId(BigInt tokenId) {
+  PetInfo.fromTokenId(BigInt tokenId) {
     this.tokenId = tokenId;
     this.custom = (tokenId & CUSTOM) >> 128;
     this.buffer = ((tokenId & BUFFER) >> 120).toInt();
@@ -47,7 +47,7 @@ class HeroInfo {
     this.no = (tokenId & NO).toInt();
   }
 
-  HeroInfo.fromListData(BigInt tokenId, List<dynamic> list) {
+  PetInfo.fromListData(BigInt tokenId, List<dynamic> list) {
     this.tokenId = tokenId;
     this.custom = list[0] as BigInt;
     this.buffer = (list[1] as BigInt).toInt();

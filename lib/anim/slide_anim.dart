@@ -4,11 +4,15 @@ class SlideAnim extends StatefulWidget {
   final Widget child;
   final Function onDismiss;
   final Offset end;
+  final Offset begin;
+  final int milliseconds;
 
   SlideAnim({
     Key key,
     @required this.child,
+    @required this.begin,
     @required this.end,
+    this.milliseconds,
     this.onDismiss,
   }) : super(key: key);
 
@@ -29,7 +33,7 @@ class _SlideAnimState extends State<SlideAnim> with TickerProviderStateMixin {
     //duration 动画的时长，这里设置的 seconds: 2 为2秒，当然也可以设置毫秒 milliseconds：2000.
     controller = AnimationController(
       duration: Duration(
-        milliseconds: 400,
+        milliseconds: widget.milliseconds,
       ),
       vsync: this,
     );
@@ -49,7 +53,8 @@ class _SlideAnimState extends State<SlideAnim> with TickerProviderStateMixin {
       }
     });
 
-    _slideAnim = Tween(begin: Offset.zero, end: widget.end).animate(controller);
+    _slideAnim =
+        Tween(begin: widget.begin, end: widget.end).animate(controller);
     controller.forward();
     super.initState();
   }

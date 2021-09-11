@@ -5,7 +5,7 @@ import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/constants/sizes.dart';
 import 'package:kingspro/entity/FightReward.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/pages/bottom-dialogs/bottom_dialog_container.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/widgets/flip.dart';

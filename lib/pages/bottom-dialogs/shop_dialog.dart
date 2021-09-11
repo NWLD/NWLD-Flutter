@@ -4,12 +4,12 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/entity/ShopItem.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
-import 'package:kingspro/pages/bottom-dialogs/open_hero_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/open_card_dialog.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
@@ -252,9 +252,9 @@ class _ShopItemState extends State<ShopItemWidget>
           if (transactionReceipt.status) {
             timer.cancel(false);
             final heroContract = await ContractUtil().abiContract(
-                'hero',
-                ConfigModel.getInstance().config(ConfigConstants.heroNFT),
-                'Hero');
+                'pet',
+                ConfigModel.getInstance().config(ConfigConstants.petNFT),
+                'Pet');
             final tokensOfFunction = heroContract.function('tokensOf');
             List result = await client.call(
               contract: heroContract,
@@ -262,11 +262,11 @@ class _ShopItemState extends State<ShopItemWidget>
               params: [ownAddress, BigInt.from(0), BigInt.from(0)],
             );
             List tokenIds = result[0] as List;
-            List<HeroInfo> heroes = <HeroInfo>[];
+            List<PetInfo> heroes = <PetInfo>[];
             int len = tokenIds.length;
             for (int index = len - num; index < len; index++) {
               BigInt id = tokenIds[index] as BigInt;
-              heroes.add(HeroInfo.fromTokenId(id));
+              heroes.add(PetInfo.fromTokenId(id));
             }
             //显示开卡动画
             BottomDialog.showDialog(
@@ -487,7 +487,7 @@ class _ShopDialogState extends State<ShopDialog>
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         shopAddressList = [
-          ConfigModel.getInstance().config(ConfigConstants.heroShop),
+          ConfigModel.getInstance().config(ConfigConstants.petShop),
         ];
       });
     });

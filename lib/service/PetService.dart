@@ -14,8 +14,8 @@ class HeroService {
     int endIndex,
   ) async {
     final client = Web3Util().web3Client();
-    final heroContract = await ContractUtil().abiContract('hero',
-        ConfigModel.getInstance().config(ConfigConstants.heroNFT), 'Hero');
+    final heroContract = await ContractUtil().abiContract('pet',
+        ConfigModel.getInstance().config(ConfigConstants.petNFT), 'Pet');
     final tokensOfFunction = heroContract.function('tokensOf');
     List result = await client.call(
       contract: heroContract,

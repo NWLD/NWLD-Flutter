@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
-import 'package:kingspro/entity/HeroInfo.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/models/account_model.dart';
-import 'package:kingspro/service/HeroService.dart';
+import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
@@ -14,7 +14,7 @@ import 'bottom_dialog_container.dart';
 
 class HeroItem extends StatefulWidget {
   final int index;
-  final HeroInfo heroInfo;
+  final PetInfo heroInfo;
 
   HeroItem({
     this.index,
@@ -28,7 +28,7 @@ class HeroItem extends StatefulWidget {
 }
 
 class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
-  HeroInfo heroInfo;
+  PetInfo heroInfo;
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
           Row(
             children: [
               Image.asset(
-                'assets/hero/hero_${heroInfo.who}.png',
+                'assets/pet/pet_${heroInfo.who}.png',
                 width: 200.w,
                 height: 200.w,
               ),
@@ -57,7 +57,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    $t('hero_${heroInfo.who}'),
+                    $t('pet_${heroInfo.who}'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: SizeConstant.h8,
@@ -156,7 +156,7 @@ class AssetsDialog extends StatefulWidget {
 
 class _AssetsDialogState extends State<AssetsDialog>
     with BaseLocalizationsStateMixin {
-  List<HeroInfo> _heroList = <HeroInfo>[];
+  List<PetInfo> _heroList = <PetInfo>[];
 
   ScrollController _controller = ScrollController(
     keepScrollOffset: true,
@@ -175,9 +175,9 @@ class _AssetsDialogState extends State<AssetsDialog>
       0,
     );
     int len = heroIds.length;
-    List<HeroInfo> heros = <HeroInfo>[];
+    List<PetInfo> heros = <PetInfo>[];
     for (int index = 0; index < len; index++) {
-      heros.add(HeroInfo.fromTokenId(heroIds[index]));
+      heros.add(PetInfo.fromTokenId(heroIds[index]));
     }
     setState(() {
       _heroList = heros;

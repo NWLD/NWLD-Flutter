@@ -60,7 +60,7 @@ flutter:
   assets:
     - assets/abi/
     - assets/i18n/
-    - assets/hero/
+    - assets/pet/
     - assets/common/
     - assets/toast/
 
