@@ -110,11 +110,7 @@ class _SettingDialogState extends State<SettingDialog>
           ),
           TouchDownScale(
             onTap: () {
-              try {
-                launch('t.me/NWLD_CN');
-              } catch (e) {
-                launch('https://0.plus/NWLD_CN');
-              }
+              launch('https://t.me/NWLD_CN');
             },
             child: ShadowContainer(
               margin: EdgeInsets.only(left: 40.w, right: 40.w, bottom: 40.w),
@@ -128,6 +124,38 @@ class _SettingDialogState extends State<SettingDialog>
                     Expanded(
                       child: Text(
                         $t('Telegram'),
+                        style: TextStyle(
+                          color: ColorConstant.title,
+                          fontSize: SizeConstant.h7,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: ColorConstant.title,
+                      size: 32.w,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          TouchDownScale(
+            onTap: () {
+              launch('https://0.plus/NWLD_CN');
+            },
+            child: ShadowContainer(
+              margin: EdgeInsets.only(left: 40.w, right: 40.w, bottom: 40.w),
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
+              height: 96.w,
+              color: ColorConstant.titleBg,
+              child: Container(
+                alignment: AlignmentDirectional.centerStart,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        $t('Btok 币用'),
                         style: TextStyle(
                           color: ColorConstant.title,
                           fontSize: SizeConstant.h7,
@@ -249,7 +277,8 @@ class _SettingDialogState extends State<SettingDialog>
               );
             },
             child: ShadowContainer(
-              margin: EdgeInsets.only(left: 40.w, right: 40.w, bottom: 40.w),
+              margin: EdgeInsets.only(
+                  left: 40.w, right: 40.w, bottom: 40.w, top: 60.w),
               padding: EdgeInsets.only(left: 20.w, right: 20.w),
               height: 96.w,
               color: ColorConstant.title,
