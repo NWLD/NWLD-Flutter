@@ -8,6 +8,7 @@ import 'package:kingspro/service/TalkingRoomService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
+import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
 import '../../constants/sizes.dart';
@@ -123,14 +124,18 @@ class _TalkingDialogState extends State<TalkingDialog>
       maxCount: 1000000,
       firstAction: true,
       action: () async {
-        TalkingDataList talkingDataList =
-            await TalkingRoomService.getTalkingDataList(lastIndex);
-        if (null == _periodicTimer) {
-          return;
+        try {
+          TalkingDataList talkingDataList =
+              await TalkingRoomService.getTalkingDataList(lastIndex);
+          if (null == _periodicTimer) {
+            return;
+          }
+          lastIndex = talkingDataList.lastIndex;
+          _list.addAll(talkingDataList.list);
+          setState(() {});
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
         }
-        lastIndex = talkingDataList.lastIndex;
-        _list.addAll(talkingDataList.list);
-        setState(() {});
       },
       onEnd: (max) {},
     );
@@ -224,10 +229,14 @@ class _TalkingDialogState extends State<TalkingDialog>
                 ),
                 TouchDownScale(
                   onTap: () {
-                    TalkingRoomService.sendMsg(editingController.text);
-                    setState(() {
-                      editingController.text = '';
-                    });
+                    try {
+                      TalkingRoomService.sendMsg(editingController.text);
+                      setState(() {
+                        editingController.text = '';
+                      });
+                    } catch (e) {
+                      ToastUtil.showToast(e.toString(), type: ToastType.error);
+                    }
                   },
                   child: ShadowContainer(
                       width: 100.w,

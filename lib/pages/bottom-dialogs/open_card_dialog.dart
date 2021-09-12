@@ -11,9 +11,9 @@ import 'package:kingspro/widgets/shadow_container.dart';
 import '../../l10n/base_localizations.dart';
 
 class OpenCardDialog extends StatefulWidget {
-  final List<PetInfo> heroes;
+  final List<PetInfo> pets;
 
-  OpenCardDialog({Key key, this.heroes}) : super(key: key);
+  OpenCardDialog({Key key, this.pets}) : super(key: key);
 
   @override
   _OpenCardState createState() => _OpenCardState();
@@ -21,11 +21,11 @@ class OpenCardDialog extends StatefulWidget {
 
 class _OpenCardState extends State<OpenCardDialog>
     with BaseLocalizationsStateMixin {
-  List _heroes = <PetInfo>[];
+  List _pets = <PetInfo>[];
 
   @override
   void initState() {
-    _heroes = widget.heroes;
+    _pets = widget.pets;
     super.initState();
   }
 
@@ -48,12 +48,12 @@ class _OpenCardState extends State<OpenCardDialog>
 
   buildItems() {
     List<Widget> items = [];
-    int len = _heroes.length;
+    int len = _pets.length;
     for (int index = 0; index < len; index++) {
       items.add(
         Padding(
           padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.w),
-          child: buildItem(_heroes[index], index),
+          child: buildItem(_pets[index], index),
         ),
       );
     }

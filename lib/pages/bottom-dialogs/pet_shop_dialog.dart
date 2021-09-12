@@ -5,21 +5,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/PetInfo.dart';
-import 'package:kingspro/entity/ShopItem.dart';
+import 'package:kingspro/entity/PetShopInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
-import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/open_card_dialog.dart';
+import 'package:kingspro/service/PetService.dart';
+import 'package:kingspro/service/PetShopService.dart';
+import 'package:kingspro/service/TokenService.dart';
+import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
-import 'package:kingspro/web3/ContractUtil.dart';
-import 'package:kingspro/web3/Web3Util.dart';
 import 'package:kingspro/widgets/TimerView.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:provider/provider.dart';
-import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
@@ -27,14 +27,6 @@ import '../../widgets/touch_down_scale.dart';
 import 'bottom_dialog_container.dart';
 
 class PetShopItemWidget extends StatefulWidget {
-  final int index;
-  final String shopAddress;
-
-  PetShopItemWidget({
-    this.index,
-    this.shopAddress,
-  });
-
   @override
   State<PetShopItemWidget> createState() {
     return _ShopItemState();
@@ -43,256 +35,218 @@ class PetShopItemWidget extends StatefulWidget {
 
 class _ShopItemState extends State<PetShopItemWidget>
     with BaseLocalizationsStateMixin {
-  EthereumAddress shopAddress;
-  ShopItem _shopItem;
+  PetShopInfo _shopItem;
+  BigInt _allowance;
 
   @override
   void initState() {
-    shopAddress = EthereumAddress.fromHex(widget.shopAddress);
-    getShopItemInfo();
+    getAllowance();
+    updateSaleInfo();
     super.initState();
   }
 
-  void getShopItemInfo() async {
-    final client = Web3Util().web3Client();
-    DeployedContract shopContract =
-        await ContractUtil().abiContract('petShop', shopAddress.hex, 'petShop');
-    ContractFunction shopInfoFunction = shopContract.function('shopInfo');
-    List result = await client.call(
-      contract: shopContract,
-      function: shopInfoFunction,
-      params: [],
+  void updateSaleInfo() {
+    if (null != _infoPeriodicTimer) {
+      return;
+    }
+    _infoPeriodicTimer = PeriodicTimer();
+    _infoPeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      firstAction: true,
+      action: () async {
+        try {
+          PetShopInfo shopItem = await PetShopService.getInfo();
+          if (null == _infoPeriodicTimer) {
+            return;
+          }
+          setState(() {
+            _shopItem = shopItem;
+          });
+          //已卖光
+          if (shopItem.soldCount >= shopItem.qty) {
+            _infoPeriodicTimer.cancel(false);
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        _cancelInfoPeriodicTimer();
+      },
     );
-    ShopItem shopItem = ShopItem(
-      nowTime: (result[0] as BigInt).toInt(),
-      title: result[1].toString(),
-      des: result[2].toString(),
-      startTime: (result[3] as BigInt).toInt(),
-      price: result[4] as BigInt,
-      qty: (result[5] as BigInt).toInt(),
-      soldCount: (result[6] as BigInt).toInt(),
+  }
+
+  PeriodicTimer _infoPeriodicTimer;
+
+  void _cancelInfoPeriodicTimer() {
+    if (null != _infoPeriodicTimer) {
+      _infoPeriodicTimer.cancel(false);
+      _infoPeriodicTimer = null;
+    }
+  }
+
+  void getAllowance() async {
+    BigInt allowance = await TokenService.allowance(
+      ConfigModel.getInstance().config(ConfigConstants.petShop),
     );
     setState(() {
-      _shopItem = shopItem;
+      _allowance = allowance;
     });
-    //定时刷新销售信息
-    if (shopItem.startTime <= shopItem.nowTime &&
-        shopItem.soldCount < shopItem.qty) {
-      updateSaleInfo();
+  }
+
+  void approve() async {
+    try {
+      EasyLoading.show(dismissOnTap: true);
+      String hash = await TokenService.approve(
+        ConfigModel.getInstance().config(ConfigConstants.petShop),
+        NumberUtil.pow(num: '1000', exponent: 26),
+      );
+      confirmApprove(hash);
+    } catch (e) {
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  PeriodicTimer _approvePeriodicTimer;
+
+  void confirmApprove(String hash) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _approvePeriodicTimer) {
+      return;
+    }
+    _approvePeriodicTimer = PeriodicTimer();
+    _approvePeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      action: () async {
+        try {
+          int hashStatus = await TransactionService.getStatus(hash);
+          if (null == _approvePeriodicTimer || 0 == hashStatus) {
+            return;
+          }
+          if (2 == hashStatus) {
+            _approvePeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('授权失败'), type: ToastType.error);
+            return;
+          }
+          if (1 == hashStatus) {
+            _approvePeriodicTimer.cancel(false);
+            setState(() {
+              _allowance = NumberUtil.pow(num: '1000', exponent: 26);
+            });
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        EasyLoading.dismiss();
+        _cancelApprovePeriodicTimer();
+      },
+    );
+  }
+
+  void _cancelApprovePeriodicTimer() {
+    if (null != _approvePeriodicTimer) {
+      _approvePeriodicTimer.cancel(false);
+      _approvePeriodicTimer = null;
     }
   }
 
   buy(int num) async {
+    //余额
+    BigInt gameTokenBalance = AccountModel().gameTokenBalance;
+    print('We have $gameTokenBalance Token');
+    //余额不足
+    if (null == gameTokenBalance ||
+        gameTokenBalance < _shopItem.price * BigInt.from(num)) {
+      ToastUtil.showToast(
+        $t('余额不足'),
+        type: ToastType.warning,
+      );
+      return;
+    }
     try {
       EasyLoading.show(dismissOnTap: true);
-      final client = Web3Util().web3Client();
-
-      final credentials = await client
-          .credentialsFromPrivateKey(AccountModel().decodePrivateKey());
-      final ownAddress = await credentials.extractAddress();
-
-      final gameTokenContract = await ContractUtil().gameTokenContract();
-      //余额
-      BigInt gameTokenBalance = AccountModel().gameTokenBalance;
-      print('We have $gameTokenBalance Token');
-      //余额不足
-      if (null == gameTokenBalance ||
-          gameTokenBalance < _shopItem.price * BigInt.from(num)) {
-        ToastUtil.showToast(
-          $t('余额不足'),
-          type: ToastType.warning,
-        );
-        return;
-      }
-      //授权额度
-      final allowFunction = gameTokenContract.function('allowance');
-      final allowance = await client.call(
-          contract: gameTokenContract,
-          function: allowFunction,
-          params: [ownAddress, shopAddress]);
-      BigInt gameTokenAllowance = allowance.first;
-      print('We have $gameTokenAllowance allowance');
-      //授权足够，直接购买
-      if (gameTokenAllowance >= _shopItem.price * BigInt.from(num)) {
-        buyHero(credentials, ownAddress, num);
-        return;
-      }
-      //需要授权
-      final approveFunction = gameTokenContract.function('approve');
-      //手续费价格
-      print('getGasPrice');
-      EtherAmount gasPrice = await client.getGasPrice();
-      print(gasPrice);
-
-      print('estimateGas');
-      //TODO 账户余额不足会估算手续费失败
-      Transaction transaction = Transaction.callContract(
-        contract: gameTokenContract,
-        function: approveFunction,
-        from: ownAddress,
-        gasPrice: gasPrice,
-        parameters: [shopAddress, gameTokenBalance],
-      );
-      BigInt maxGas = await client.estimateGas(
-        sender: transaction.from,
-        to: transaction.to,
-        data: transaction.data,
-        value: transaction.value,
-        gasPrice: transaction.gasPrice,
-      );
-      //1.1倍估算的gas，避免交易失败
-      maxGas = maxGas * BigInt.from(110) ~/ BigInt.from(100);
-      print(maxGas);
-
-      print('gas');
-      BigInt gas = maxGas * gasPrice.getInWei;
-      print(gas);
-
-      String approveHash = await client.sendTransaction(
-        credentials,
-        transaction,
-        chainId: SettingsModel().currentChain().chainId,
-      );
-      print('approveHash $approveHash');
-
-      PeriodicTimer timer = PeriodicTimer();
-      timer.start(
-        milliseconds: 3000,
-        action: () async {
-          TransactionReceipt transactionReceipt =
-              await client.getTransactionReceipt(approveHash);
-          //Pending
-          if (null == transactionReceipt) {
-            print('approve pending');
-            return;
-          }
-          print(transactionReceipt);
-          //交易成功，已授权，可以购买了
-          if (transactionReceipt.status) {
-            timer.cancel(false);
-            buyHero(credentials, ownAddress, num);
-            return;
-          }
-          //交易失败
-          timer.cancel(false);
-        },
-        maxCount: 10,
-        onEnd: (bool max) {
-          //次数超过，导致周期性执行失败
-          if (true == max) {
-            return;
-          }
-          print('approve onEnd');
-        },
-      );
-      await client.dispose();
+      String buyHash = await PetShopService.buy(num);
+      confirmBuy(buyHash, num);
     } catch (e) {
-      ToastUtil.showToast(e.toString());
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
     } finally {
       EasyLoading.dismiss();
     }
   }
 
-  void buyHero(credentials, ownAddress, int num) async {
+  PeriodicTimer _buyPeriodicTimer;
+
+  void confirmBuy(String hash, int num) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _buyPeriodicTimer) {
+      return;
+    }
+    _buyPeriodicTimer = PeriodicTimer();
+    _buyPeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      action: () async {
+        try {
+          int hashStatus = await TransactionService.getStatus(hash);
+          if (null == _buyPeriodicTimer || 0 == hashStatus) {
+            return;
+          }
+          if (2 == hashStatus) {
+            _buyPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('购买失败'), type: ToastType.error);
+            return;
+          }
+          if (1 == hashStatus) {
+            _buyPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('购买成功'), type: ToastType.success);
+            showOpenCardDialog(num);
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        EasyLoading.dismiss();
+        _cancelBuyPeriodicTimer();
+      },
+    );
+  }
+
+  void showOpenCardDialog(int num) async {
     try {
-      EasyLoading.show(dismissOnTap: true);
-      final client = Web3Util().web3Client();
-      final shopContract = await ContractUtil()
-          .abiContract('petShop', shopAddress.hex, 'petShop');
-      final buyFunction = shopContract.function('buy');
-      final patchBuyFunction = shopContract.function('batchBuy');
-
-      //手续费价格
-      print('getGasPrice');
-      EtherAmount gasPrice = await client.getGasPrice();
-      print(gasPrice);
-
-      print('estimateGas');
-      //TODO 账户余额不足会估算手续费失败
-      Transaction transaction = Transaction.callContract(
-        contract: shopContract,
-        function: 1 == num ? buyFunction : patchBuyFunction,
-        from: ownAddress,
-        gasPrice: gasPrice,
-        parameters: 1 == num ? [] : [BigInt.from(num)],
+      List<PetInfo> pets =
+          await PetService.getPets(AccountModel.getInstance().account);
+      int len = pets.length;
+      //只显示最近购买的
+      int index = len - num;
+      if (index < 0) {
+        index = 0;
+      }
+      List<PetInfo> numPets = [];
+      for (; index < len; index++) {
+        numPets.add(pets[index]);
+      }
+      BottomDialog.showDialog(
+        context,
+        OpenCardDialog(
+          pets: numPets,
+        ),
       );
-      BigInt maxGas = await client.estimateGas(
-        sender: transaction.from,
-        to: transaction.to,
-        data: transaction.data,
-        value: transaction.value,
-        gasPrice: transaction.gasPrice,
-      );
-      //1.1倍估算的gas，避免交易失败
-      maxGas = maxGas * BigInt.from(120) ~/ BigInt.from(100);
-      print(maxGas);
-
-      transaction = transaction.copyWith(maxGas: maxGas.toInt());
-
-      String buyHash = await client.sendTransaction(
-        credentials,
-        transaction,
-        chainId: SettingsModel().currentChain().chainId,
-      );
-      print('buyHash= $buyHash');
-      PeriodicTimer timer = PeriodicTimer();
-      timer.start(
-        milliseconds: 3000,
-        maxCount: 10,
-        action: () async {
-          TransactionReceipt transactionReceipt =
-              await client.getTransactionReceipt(buyHash);
-          //Pending
-          if (null == transactionReceipt) {
-            print('buy pending');
-            return;
-          }
-          print(transactionReceipt);
-          //购买成功，可以播放开卡动画了
-          if (transactionReceipt.status) {
-            timer.cancel(false);
-            final heroContract = await ContractUtil().abiContract(
-                'pet',
-                ConfigModel.getInstance().config(ConfigConstants.petNFT),
-                'Pet');
-            final tokensOfFunction = heroContract.function('tokensOf');
-            List result = await client.call(
-              contract: heroContract,
-              function: tokensOfFunction,
-              params: [ownAddress, BigInt.from(0), BigInt.from(0)],
-            );
-            List tokenIds = result[0] as List;
-            List<PetInfo> heroes = <PetInfo>[];
-            int len = tokenIds.length;
-            for (int index = len - num; index < len; index++) {
-              BigInt id = tokenIds[index] as BigInt;
-              heroes.add(PetInfo.fromTokenId(id));
-            }
-            //显示开卡动画
-            BottomDialog.showDialog(
-                context,
-                OpenCardDialog(
-                  heroes: heroes,
-                ));
-            return;
-          }
-          //交易失败
-          timer.cancel(false);
-        },
-        onEnd: (bool max) {
-          EasyLoading.dismiss();
-          //次数超过，导致周期性执行失败
-          if (true == max) {
-            return;
-          }
-          print('buy onEnd');
-        },
-      );
-      await client.dispose();
     } catch (e) {
-      ToastUtil.showToast(e.toString());
-    } finally {
-      EasyLoading.dismiss();
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
+    }
+  }
+
+  void _cancelBuyPeriodicTimer() {
+    if (null != _buyPeriodicTimer) {
+      _buyPeriodicTimer.cancel(false);
+      _buyPeriodicTimer = null;
     }
   }
 
@@ -316,6 +270,29 @@ class _ShopItemState extends State<PetShopItemWidget>
         style: TextStyle(
           color: Colors.white,
           fontSize: SizeConstant.h8,
+        ),
+      );
+    }
+    //授权
+    if (null == _allowance || _allowance < _shopItem.price * BigInt.from(10)) {
+      return TouchDownScale(
+        onTapDown: (ev) {},
+        onTap: () {
+          approve();
+        },
+        child: ShadowContainer(
+          width: 100.w,
+          height: 48.w,
+          color: ColorConstant.bg_level_9,
+          child: Center(
+            child: Text(
+              $t('授权'),
+              style: TextStyle(
+                color: ColorConstant.title,
+                fontSize: SizeConstant.h8,
+              ),
+            ),
+          ),
         ),
       );
     }
@@ -352,12 +329,12 @@ class _ShopItemState extends State<PetShopItemWidget>
           child: ShadowContainer(
             width: 100.w,
             height: 48.w,
-            color: ColorConstant.bg_level_7,
+            color: ColorConstant.bg_level_9,
             child: Center(
               child: Text(
                 $t('10 连'),
                 style: TextStyle(
-                  color: ColorConstant.titleBg,
+                  color: ColorConstant.title,
                   fontSize: SizeConstant.h8,
                 ),
               ),
@@ -374,58 +351,52 @@ class _ShopItemState extends State<PetShopItemWidget>
       return Container();
     }
     return ShadowContainer(
-      height: 240.w,
+      height: 320.w,
       margin: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.w),
       padding: EdgeInsets.all(20.w),
       color: ColorConstant.titleBg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _shopItem.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: SizeConstant.h7,
-                  ),
-                ),
-              ),
-              SizedBox(width: 20.w),
-              Text(
-                '${_shopItem.soldCount}/${_shopItem.qty}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: SizeConstant.h7,
-                ),
-              ),
-            ],
+          Text(
+            _shopItem.title,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: SizeConstant.h7,
+                fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10.w),
           Text(
             _shopItem.des,
             style: TextStyle(
-              color: ColorConstant.des,
+              color: ColorConstant.title,
               fontSize: SizeConstant.h9,
             ),
           ),
           Expanded(child: Container()),
+          Text(
+            NumberUtil.decimalNumString(
+                  num: _shopItem.price.toString(),
+                  fractionDigits: 0,
+                ) +
+                ' ' +
+                ConfigConstants.gameTokenSymbol,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: SizeConstant.h7,
+                fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10.w),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                NumberUtil.decimalNumString(
-                      num: _shopItem.price.toString(),
-                      fractionDigits: 0,
-                    ) +
-                    ' ' +
-                    ConfigConstants.gameTokenSymbol,
+                '${_shopItem.soldCount}/${_shopItem.qty}',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: SizeConstant.h7,
-                ),
+                    color: Colors.white,
+                    fontSize: SizeConstant.h7,
+                    fontWeight: FontWeight.bold),
               ),
               Expanded(child: Container()),
               buildBuyButton(),
@@ -436,29 +407,11 @@ class _ShopItemState extends State<PetShopItemWidget>
     );
   }
 
-  void updateSaleInfo() {
-    if (null != _periodicTimer) {
-      return;
-    }
-    _periodicTimer = PeriodicTimer();
-    _periodicTimer.start(
-      milliseconds: 3000,
-      maxCount: 100000,
-      action: () {
-        getShopItemInfo();
-      },
-      onEnd: (max) {},
-    );
-  }
-
-  PeriodicTimer _periodicTimer;
-
   @override
   void dispose() {
-    if (null != _periodicTimer) {
-      _periodicTimer.cancel(false);
-      _periodicTimer = null;
-    }
+    _cancelInfoPeriodicTimer();
+    _cancelBuyPeriodicTimer();
+    _cancelApprovePeriodicTimer();
     super.dispose();
   }
 }
@@ -502,16 +455,11 @@ class _PetShopDialogState extends State<PetShopDialog>
   Widget build(BuildContext context) {
     return Consumer<AccountModel>(builder: (context, accountModel, child) {
       return BottomDialogContainer(
-        title: $t("礼包"),
-        content: ListView.builder(
-          controller: _controller,
-          itemCount: shopAddressList.length,
-          itemBuilder: (context, index) {
-            return PetShopItemWidget(
-              index: index,
-              shopAddress: shopAddressList[index],
-            );
-          },
+        title: $t("卡包"),
+        content: Column(
+          children: [
+            PetShopItemWidget(),
+          ],
         ),
       );
     });

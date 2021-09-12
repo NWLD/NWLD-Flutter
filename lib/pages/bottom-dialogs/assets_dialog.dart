@@ -6,6 +6,7 @@ import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
+import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
 import '../../constants/sizes.dart';
@@ -100,9 +101,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
               ),
               TouchDownScale(
                 onTapDown: (ev) {},
-                onTap: () {
-
-                },
+                onTap: () {},
                 child: ShadowContainer(
                   width: 100.w,
                   height: 48.w,
@@ -123,9 +122,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
               ),
               TouchDownScale(
                 onTapDown: (ev) {},
-                onTap: () {
-
-                },
+                onTap: () {},
                 child: ShadowContainer(
                   width: 100.w,
                   height: 48.w,
@@ -156,7 +153,7 @@ class AssetsDialog extends StatefulWidget {
 
 class _AssetsDialogState extends State<AssetsDialog>
     with BaseLocalizationsStateMixin {
-  List<PetInfo> _heroList = <PetInfo>[];
+  List<PetInfo> _petList = <PetInfo>[];
 
   ScrollController _controller = ScrollController(
     keepScrollOffset: true,
@@ -169,17 +166,15 @@ class _AssetsDialogState extends State<AssetsDialog>
   }
 
   void getHeroList() async {
-    List<BigInt> heroIds = await HeroService.getHeroIds(
-      AccountModel.getInstance().account
-    );
-    int len = heroIds.length;
-    List<PetInfo> heros = <PetInfo>[];
-    for (int index = 0; index < len; index++) {
-      heros.add(PetInfo.fromTokenId(heroIds[index]));
+    try {
+      List<PetInfo> pets =
+          await PetService.getPets(AccountModel.getInstance().account);
+      setState(() {
+        _petList = pets;
+      });
+    } catch (e) {
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
     }
-    setState(() {
-      _heroList = heros;
-    });
   }
 
   @override
@@ -194,11 +189,11 @@ class _AssetsDialogState extends State<AssetsDialog>
       title: $t("资产"),
       content: ListView.builder(
         controller: _controller,
-        itemCount: _heroList.length,
+        itemCount: _petList.length,
         itemBuilder: (context, index) {
           return HeroItem(
             index: index,
-            heroInfo: _heroList[index],
+            heroInfo: _petList[index],
           );
         },
       ),

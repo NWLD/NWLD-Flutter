@@ -1,5 +1,5 @@
-class ShopItem {
-  ShopItem({
+class PetShopInfo {
+  PetShopInfo({
     this.title,
     this.des,
     this.startTime,

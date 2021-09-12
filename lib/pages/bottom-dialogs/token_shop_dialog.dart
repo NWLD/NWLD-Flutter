@@ -10,7 +10,6 @@ import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/service/TokenShopService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
-import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
@@ -54,16 +53,20 @@ class _ShopItemState extends State<TokenShopItemWidget>
       maxCount: 100000,
       firstAction: true,
       action: () async {
-        TokenShopItem shopItem = await TokenShopService.getInfo(widget.index);
-        if (null == _infoPeriodicTimer) {
-          return;
-        }
-        setState(() {
-          _shopItem = shopItem;
-        });
-        //已卖光
-        if (shopItem.soldCount >= shopItem.qty) {
-          _infoPeriodicTimer.cancel(false);
+        try {
+          TokenShopItem shopItem = await TokenShopService.getInfo(widget.index);
+          if (null == _infoPeriodicTimer) {
+            return;
+          }
+          setState(() {
+            _shopItem = shopItem;
+          });
+          //已卖光
+          if (shopItem.soldCount >= shopItem.qty) {
+            _infoPeriodicTimer.cancel(false);
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
         }
       },
       onEnd: (max) {
@@ -88,7 +91,7 @@ class _ShopItemState extends State<TokenShopItemWidget>
           await TokenShopService.buy(_shopItem.price, widget.index);
       confirmBuy(buyHash);
     } catch (e) {
-      ToastUtil.showToast(e.toString());
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
     } finally {
       EasyLoading.dismiss();
     }
@@ -121,7 +124,7 @@ class _ShopItemState extends State<TokenShopItemWidget>
             ToastUtil.showToast($t('购买成功'), type: ToastType.success);
           }
         } catch (e) {
-          LogUtil.log('confirmBuy', e);
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
         } finally {}
       },
       onEnd: (max) {
@@ -240,6 +243,7 @@ class _ShopItemState extends State<TokenShopItemWidget>
   @override
   void dispose() {
     _cancelInfoPeriodicTimer();
+    _cancelBuyPeriodicTimer();
     super.dispose();
   }
 }

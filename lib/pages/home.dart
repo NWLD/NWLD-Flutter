@@ -11,7 +11,6 @@ import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/pet_shop_dialog.dart';
-import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/token_shop_dialog.dart';
 import 'package:kingspro/pages/game/game1_dialog.dart';
@@ -115,7 +114,7 @@ class _GameHomePageState extends State<GameHomePage>
     }
     BottomDialog.showDialog(context, AssetsDialog());
     LogUtil.log('account', AccountModel.getInstance().account);
-    LogUtil.log('privateKey', AccountModel.getInstance().decodePrivateKey());
+    // LogUtil.log('privateKey', AccountModel.getInstance().decodePrivateKey());
     AccountModel.getInstance().getBalance();
     print(await Web3Util().web3Client().getBlockNumber());
   }
@@ -155,6 +154,7 @@ class _GameHomePageState extends State<GameHomePage>
                   Clipboard.setData(data);
                   ToastUtil.showToast(
                     $t("已复制"),
+                    type: ToastType.success,
                   );
                 },
                 child: Padding(
@@ -260,7 +260,7 @@ class _GameHomePageState extends State<GameHomePage>
           child: Text(
             tab,
             style: TextStyle(
-              color: ColorConstant.titleBg,
+              color: ColorConstant.title,
               fontSize: SizeConstant.h6,
             ),
           ),
@@ -274,11 +274,7 @@ class _GameHomePageState extends State<GameHomePage>
     return Container(
       height: 96.w,
       decoration: BoxDecoration(
-        color: ColorConstant.title,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.w),
-          topRight: Radius.circular(16.w),
-        ),
+        color: ColorConstant.titleBg,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end, //横轴居中对齐(默认)

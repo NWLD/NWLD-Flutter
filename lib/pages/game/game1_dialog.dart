@@ -94,7 +94,8 @@ class _Game1DialogState extends State<Game1Dialog>
             );
           }
         } catch (e) {
-          LogUtil.log('getFightResult', e);
+          ToastUtil.showToast(e.toString(),
+              type: ToastType.error);
         } finally {}
       },
       onEnd: (max) {
@@ -413,7 +414,8 @@ class _Game1DialogState extends State<Game1Dialog>
                         );
                         getFightResult(hash, _fightCount);
                       } catch (e) {
-                        LogUtil.log('e', e);
+                        ToastUtil.showToast(e.toString(),
+                            type: ToastType.error);
                       } finally {
                         EasyLoading.dismiss();
                       }
