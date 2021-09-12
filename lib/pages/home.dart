@@ -13,6 +13,7 @@ import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/pet_shop_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/token_shop_dialog.dart';
 import 'package:kingspro/pages/game/game1_dialog.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
@@ -231,7 +232,7 @@ class _GameHomePageState extends State<GameHomePage>
                       color: ColorConstant.titleBg,
                       child: Center(
                         child: Text(
-                          $t('兑换'),
+                          $t('礼包'),
                           style: TextStyle(
                             color: ColorConstant.title,
                             fontSize: SizeConstant.h7,
@@ -240,7 +241,7 @@ class _GameHomePageState extends State<GameHomePage>
                       ),
                     ),
                     onTap: () {
-                      BottomDialog.showDialog(context, SwapDialog());
+                      BottomDialog.showDialog(context, TokenShopDialog());
                     },
                   ),
                 ],

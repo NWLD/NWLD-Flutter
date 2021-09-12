@@ -197,8 +197,8 @@ class _ShopItemState extends State<PetShopItemWidget>
     try {
       EasyLoading.show(dismissOnTap: true);
       final client = Web3Util().web3Client();
-      final shopContract =
-          await ContractUtil().abiContract('petShop', shopAddress.hex, 'petShop');
+      final shopContract = await ContractUtil()
+          .abiContract('petShop', shopAddress.hex, 'petShop');
       final buyFunction = shopContract.function('buy');
       final patchBuyFunction = shopContract.function('batchBuy');
 
@@ -421,8 +421,7 @@ class _ShopItemState extends State<PetShopItemWidget>
                       fractionDigits: 0,
                     ) +
                     ' ' +
-                    ConfigModel.getInstance()
-                        .config(ConfigConstants.gameTokenSymbol),
+                    ConfigConstants.gameTokenSymbol,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: SizeConstant.h7,
