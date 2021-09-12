@@ -33,7 +33,6 @@ class BaseDialogContainer {
       // 自定义遮罩颜色
       transitionDuration: const Duration(milliseconds: 150),
       transitionBuilder: _buildMaterialDialogTransitions,
-
       pageBuilder: (BuildContext buildContext, Animation<double> animation,
           Animation<double> secondaryAnimation) {
         final Widget pageChild = child ?? Builder(builder: builder);

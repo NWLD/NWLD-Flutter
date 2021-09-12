@@ -4,6 +4,7 @@ import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/log_util.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/web3/AccountUtil.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:web3dart/web3dart.dart';
@@ -18,13 +19,14 @@ class TokenShopService {
         ConfigModel.getInstance().config(ConfigConstants.tokenShop),
         'tokenShop');
     final infoFunction = contract.function('info');
+    String account = AccountModel.getInstance().account;
+    if (StringUtils.isEmpty(account)) {
+      account = '0x000000000000000000000000000000000000dEaD';
+    }
     List result = await client.call(
       contract: contract,
       function: infoFunction,
-      params: [
-        EthereumAddress.fromHex(AccountModel.getInstance().account),
-        BigInt.from(index)
-      ],
+      params: [EthereumAddress.fromHex(account), BigInt.from(index)],
     );
     LogUtil.log('info', result);
     return TokenShopItem(

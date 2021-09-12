@@ -1,88 +1,129 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/constants/colors.dart';
+import 'package:kingspro/widgets/auto_fontSize_text.dart';
+import 'package:kingspro/widgets/shadow_container.dart';
+import 'package:kingspro/widgets/touch_down_scale.dart';
+
 import '../../constants/sizes.dart';
 
-class RewardCenterContainer extends StatelessWidget {
-  final String name;
-  final String prefixText;
-  final String icon;
-  final String appendText;
-  final Color color;
-  final List<Widget> children;
+class CenterDialogContainer extends StatelessWidget {
+  final String title;
+  final String content;
+  final String cancel;
+  final String confirm;
+  final Function onConfirm;
 
-  RewardCenterContainer({
-    @required this.name,
-    this.prefixText,
-    this.icon,
-    this.appendText,
-    this.color,
-    this.children,
+  CenterDialogContainer({
+    @required this.title,
+    this.content,
+    this.cancel,
+    this.confirm,
+    this.onConfirm,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 566.w,
-      margin: EdgeInsets.only(top: 20.w, bottom: 50.w),
-      child: Column(
-        children: [
-          if (prefixText != null)
-            Text(
-              prefixText,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFFDBBFDE),
-                fontSize: SizeConstant.h7,
-              ),
-            ),
-          Container(
-            width: 566.w,
-            height: 330.w,
-            margin: EdgeInsets.only(top: 30.w, bottom: 10.w),
-            decoration: BoxDecoration(
-              color: color ?? Color.fromRGBO(86, 26, 143, 1),
-              borderRadius: BorderRadius.all(Radius.circular(22)),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(155, 93, 220, 0.5),
-                  offset: Offset(0, 1.5),
-                ),
-              ],
-            ),
-            child: Stack(
-              overflow: Overflow.visible,
-              alignment: Alignment.bottomCenter,
-              children: [
-                if (icon != null)
-                  Positioned(
-                    width: 400.w,
-                    child: Image.asset(icon),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.w),
+          child: Container(
+            width: 630.w,
+            color: ColorConstant.appBackground,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: 630.w,
+                  height: 96.w,
+                  alignment: AlignmentDirectional.center,
+                  decoration: BoxDecoration(
+                    color: ColorConstant.titleBg,
                   ),
-                if (children != null) ...children,
-                Positioned(
-                  bottom: 20.w,
-                  child: Text(
-                    name,
+                  child: AutoFontSizeText(
+                    text: title ?? "title",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFFFFFFFF),
+                      color: ColorConstant.title,
+                      fontSize: SizeConstant.h5,
+                      height: 1,
+                    ),
+                    minfontSize: 10,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(40.w),
+                  child: Text(
+                    content ?? "content",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      color: ColorConstant.title,
                       fontSize: SizeConstant.h7,
+                      height: 1.3,
                     ),
                   ),
                 ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TouchDownScale(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: ShadowContainer(
+                          margin: EdgeInsets.all(40.w),
+                          height: 80.w,
+                          child: Center(
+                            child: Text(
+                              cancel ?? "cancel",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: ColorConstant.title,
+                                fontSize: SizeConstant.h7,
+                                height: 1,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: TouchDownScale(
+                        onTap: () {
+                          if (null != onConfirm) {
+                            onConfirm();
+                          }
+                          Navigator.of(context).pop();
+                        },
+                        child: ShadowContainer(
+                          height: 80.w,
+                          color: ColorConstant.titleBg,
+                          margin: EdgeInsets.all(40.w),
+                          child: Center(
+                            child: Text(
+                              confirm ?? "confirm",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: ColorConstant.title,
+                                fontSize: SizeConstant.h7,
+                                height: 1,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
-          if (appendText != null)
-            Text(
-              appendText,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFFDBBFDE),
-                fontSize: SizeConstant.h7,
-              ),
-            )
-        ],
+        ),
       ),
     );
   }

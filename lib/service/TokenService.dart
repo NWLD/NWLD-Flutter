@@ -9,6 +9,7 @@ import '../web3/Web3Util.dart';
 
 class TokenService {
   static Future<BigInt> allowance(String address) async {
+    LogUtil.log('allowance', "start");
     final client = Web3Util().web3Client();
     final contract = await ContractUtil().gameTokenContract();
     final function = contract.function('allowance');

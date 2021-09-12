@@ -7,6 +7,7 @@ import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/TokenShopItem.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/service/TokenShopService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
@@ -85,6 +86,9 @@ class _ShopItemState extends State<TokenShopItemWidget>
   }
 
   void buyToken() async {
+    if (LoginDialog.shouldShow(context)) {
+      return;
+    }
     try {
       EasyLoading.show(dismissOnTap: true);
       String buyHash =
@@ -120,6 +124,7 @@ class _ShopItemState extends State<TokenShopItemWidget>
             return;
           }
           if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
             _buyPeriodicTimer.cancel(false);
             ToastUtil.showToast($t('购买成功'), type: ToastType.success);
           }

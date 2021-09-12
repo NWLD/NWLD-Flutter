@@ -8,6 +8,7 @@ import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/entity/PetShopInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/open_card_dialog.dart';
 import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/service/PetShopService.dart';
@@ -15,6 +16,7 @@ import 'package:kingspro/service/TokenService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/TimerView.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
@@ -87,6 +89,9 @@ class _ShopItemState extends State<PetShopItemWidget>
   }
 
   void getAllowance() async {
+    if (StringUtils.isEmpty(AccountModel.getInstance().account)) {
+      return;
+    }
     BigInt allowance = await TokenService.allowance(
       ConfigModel.getInstance().config(ConfigConstants.petShop),
     );
@@ -96,6 +101,9 @@ class _ShopItemState extends State<PetShopItemWidget>
   }
 
   void approve() async {
+    if (LoginDialog.shouldShow(context)) {
+      return;
+    }
     try {
       EasyLoading.show(dismissOnTap: true);
       String hash = await TokenService.approve(
@@ -133,6 +141,7 @@ class _ShopItemState extends State<PetShopItemWidget>
             return;
           }
           if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
             _approvePeriodicTimer.cancel(false);
             setState(() {
               _allowance = NumberUtil.pow(num: '1000', exponent: 26);
@@ -203,6 +212,7 @@ class _ShopItemState extends State<PetShopItemWidget>
             return;
           }
           if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
             _buyPeriodicTimer.cancel(false);
             ToastUtil.showToast($t('购买成功'), type: ToastType.success);
             showOpenCardDialog(num);

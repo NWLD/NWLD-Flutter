@@ -1,10 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/center-dialogs/center_dialog_container.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/base_button.dart';
+import 'package:kingspro/widgets/base_dialog.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../constants/colors.dart';
@@ -203,11 +206,37 @@ class _LoginDialogState extends State<LoginDialog>
             privateKey: encodePrivateKey,
           );
           Navigator.of(context).pop();
+          showPrivateKey();
         } catch (e) {
           print(e);
           throw e;
         } finally {}
       },
+    );
+  }
+
+  void showPrivateKey() {
+    if (LoginDialog.shouldShow(context)) {
+      return;
+    }
+    BaseDialogContainer.showDialog(
+      context: context,
+      child: CenterDialogContainer(
+        title: $t('备份私钥'),
+        content: AccountModel.getInstance().decodePrivateKey(),
+        cancel: $t('关闭'),
+        confirm: $t('复制'),
+        onConfirm: () {
+          ClipboardData data = new ClipboardData(
+            text: AccountModel.getInstance().decodePrivateKey(),
+          );
+          Clipboard.setData(data);
+          ToastUtil.showToast(
+            $t("已复制"),
+            type: ToastType.success,
+          );
+        },
+      ),
     );
   }
 

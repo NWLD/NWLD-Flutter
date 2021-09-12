@@ -4,6 +4,7 @@ import 'package:kingspro/service/ConfigService.dart';
 
 class ConfigModel extends ChangeNotifier {
   static ConfigModel _instance;
+  bool hasConfig = false;
 
   static ConfigModel getInstance() {
     if (_instance == null) {
@@ -32,6 +33,7 @@ class ConfigModel extends ChangeNotifier {
 
   updateConfig(Map<String, String> map) {
     _configMap = map ?? {};
+    hasConfig = true;
     notifyListeners();
   }
 

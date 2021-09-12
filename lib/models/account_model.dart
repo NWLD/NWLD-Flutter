@@ -89,4 +89,13 @@ class AccountModel extends ChangeNotifier {
     );
     notifyListeners();
   }
+
+  void exit() {
+    name = null;
+    account = null;
+    privateKey = null;
+    balance = null;
+    gameTokenBalance = null;
+    onStateChanged();
+  }
 }

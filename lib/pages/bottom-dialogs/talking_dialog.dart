@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/entity/TalkingData.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/service/TalkingRoomService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/string_util.dart';
@@ -45,14 +46,16 @@ class _TalkingItemState extends State<TalkingItem>
     return Padding(
       padding: EdgeInsets.only(left: 40.w, right: 40.w, bottom: 40.w),
       child: Column(
-        crossAxisAlignment: talkingData.address.toLowerCase() ==
-                AccountModel().account.toLowerCase()
+        crossAxisAlignment: AccountModel().account != null &&
+                AccountModel().account.toLowerCase() ==
+                    talkingData.address.toLowerCase()
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: talkingData.address.toLowerCase() ==
-                    AccountModel().account.toLowerCase()
+            mainAxisAlignment: AccountModel().account != null &&
+                    AccountModel().account.toLowerCase() ==
+                        talkingData.address.toLowerCase()
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
             children: [
@@ -72,8 +75,9 @@ class _TalkingItemState extends State<TalkingItem>
           ),
           ShadowContainer(
             padding: EdgeInsets.all(20.w),
-            color: talkingData.address.toLowerCase() ==
-                    AccountModel().account.toLowerCase()
+            color: AccountModel().account != null &&
+                    AccountModel().account.toLowerCase() ==
+                        talkingData.address.toLowerCase()
                 ? ColorConstant.titleBg
                 : ColorConstant.bg_level_2,
             child: Text(
@@ -229,6 +233,12 @@ class _TalkingDialogState extends State<TalkingDialog>
                 ),
                 TouchDownScale(
                   onTap: () {
+                    if (LoginDialog.shouldShow(context)) {
+                      return;
+                    }
+                    if (StringUtils.isEmpty(editingController.text)) {
+                      return;
+                    }
                     try {
                       TalkingRoomService.sendMsg(editingController.text);
                       setState(() {

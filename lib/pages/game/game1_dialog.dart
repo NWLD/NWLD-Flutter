@@ -7,6 +7,7 @@ import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/entity/FightReward.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/game/fight_result_dialog.dart';
 import 'package:kingspro/pages/game/select_fight_dialog.dart';
 import 'package:kingspro/service/SimpleGameService.dart';
@@ -75,6 +76,7 @@ class _Game1DialogState extends State<Game1Dialog>
             return;
           }
           if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
             _periodicTimer.cancel(false);
             List<int> results = await SimpleGameService.getFightResults(
                 _fightHero.heroInfo.tokenId);
@@ -94,8 +96,7 @@ class _Game1DialogState extends State<Game1Dialog>
             );
           }
         } catch (e) {
-          ToastUtil.showToast(e.toString(),
-              type: ToastType.error);
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
         } finally {}
       },
       onEnd: (max) {
@@ -234,6 +235,9 @@ class _Game1DialogState extends State<Game1Dialog>
                 ),
                 TouchDownScale(
                   onTap: () {
+                    if (LoginDialog.shouldShow(context)) {
+                      return;
+                    }
                     BottomDialog.showDialog(
                       context,
                       SelectFightHeroDialog(

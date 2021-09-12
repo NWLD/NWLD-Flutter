@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/util/log_util.dart';
 import 'package:oktoast/oktoast.dart' as okToast;
 
 import '../constants/colors.dart';
@@ -35,6 +36,7 @@ Map<ToastType, String> ToastIcon = {
 
 class ToastUtil {
   static showToast(String msg, {type = ToastType.info, int seconds}) {
+    LogUtil.log('toast', msg);
     if (null != msg && "" != msg.trim()) {
       okToast.showToastWidget(
         ToastUI(

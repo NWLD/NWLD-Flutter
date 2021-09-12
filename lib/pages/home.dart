@@ -11,6 +11,7 @@ import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/pet_shop_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/setting_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/token_shop_dialog.dart';
 import 'package:kingspro/pages/game/game1_dialog.dart';
@@ -104,8 +105,8 @@ class _GameHomePageState extends State<GameHomePage>
     BottomDialog.showDialog(context, TalkingDialog());
   }
 
-  showPersonalCenter() {
-    // BottomDialog.showDialog(context, MineDialog());
+  showSetting() {
+    BottomDialog.showDialog(context, SettingDialog());
   }
 
   showAssets() async {
@@ -114,7 +115,7 @@ class _GameHomePageState extends State<GameHomePage>
     }
     BottomDialog.showDialog(context, AssetsDialog());
     LogUtil.log('account', AccountModel.getInstance().account);
-    // LogUtil.log('privateKey', AccountModel.getInstance().decodePrivateKey());
+    LogUtil.log('privateKey', AccountModel.getInstance().decodePrivateKey());
     AccountModel.getInstance().getBalance();
     print(await Web3Util().web3Client().getBlockNumber());
   }
@@ -136,16 +137,41 @@ class _GameHomePageState extends State<GameHomePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AutoSizeText(
-                accountModel.name ?? "",
-                maxLines: 1,
-                minFontSize: 10,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: SizeConstant.h7,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: AutoSizeText(
+                      accountModel.name ?? "",
+                      maxLines: 1,
+                      minFontSize: 10,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: SizeConstant.h7,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TouchDownScale(
+                    onTap: () {
+                      showSetting();
+                    },
+                    child: ShadowContainer(
+                      padding: EdgeInsets.all(10.w),
+                      color: ColorConstant.bg_level_9,
+                      child: Center(
+                        child: Text(
+                          $t('设置'),
+                          style: TextStyle(
+                            color: ColorConstant.title,
+                            fontSize: SizeConstant.h9,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               TouchDownScale(
                 onTap: () {
@@ -160,7 +186,7 @@ class _GameHomePageState extends State<GameHomePage>
                 child: Padding(
                   padding: EdgeInsets.only(top: 6.w, bottom: 6.w),
                   child: AutoSizeText(
-                    accountModel.account,
+                    accountModel.account ?? '',
                     maxLines: 1,
                     minFontSize: 10,
                     style: TextStyle(
@@ -172,7 +198,7 @@ class _GameHomePageState extends State<GameHomePage>
               ),
               Expanded(child: Container()),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: Column(
@@ -225,25 +251,26 @@ class _GameHomePageState extends State<GameHomePage>
                       ],
                     ),
                   ),
-                  TouchDownScale(
-                    child: ShadowContainer(
-                      width: 120.w,
-                      height: 64.w,
-                      color: ColorConstant.titleBg,
-                      child: Center(
-                        child: Text(
-                          $t('礼包'),
-                          style: TextStyle(
-                            color: ColorConstant.title,
-                            fontSize: SizeConstant.h7,
+                  if (ConfigModel.getInstance().hasConfig)
+                    TouchDownScale(
+                      child: ShadowContainer(
+                        width: 120.w,
+                        height: 64.w,
+                        color: ColorConstant.titleBg,
+                        child: Center(
+                          child: Text(
+                            $t('礼包'),
+                            style: TextStyle(
+                              color: ColorConstant.title,
+                              fontSize: SizeConstant.h7,
+                            ),
                           ),
                         ),
                       ),
+                      onTap: () {
+                        BottomDialog.showDialog(context, TokenShopDialog());
+                      },
                     ),
-                    onTap: () {
-                      BottomDialog.showDialog(context, TokenShopDialog());
-                    },
-                  ),
                 ],
               )
             ],
@@ -282,7 +309,7 @@ class _GameHomePageState extends State<GameHomePage>
           buildTab($t('商店'), showShop),
           buildTab($t('背包'), showAssets),
           buildTab($t('聊天'), showTalking),
-          buildTab($t('排行榜'), showRank),
+          // buildTab($t('排行榜'), showRank),
         ],
       ),
     );
@@ -342,32 +369,63 @@ class _GameHomePageState extends State<GameHomePage>
             alignment: Alignment.center,
             children: [
               SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    buildCard(),
-                    Expanded(
-                      child: GridView(
-                        padding: EdgeInsets.only(top: 0, bottom: 0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 2,
-                        ),
-                        children: buildGameList(),
-                        physics: AlwaysScrollableScrollPhysics(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40.w,
-                    ),
-                    buildBottomButtons(),
-                  ],
-                ),
+                child: buildBody(),
               ),
             ],
           );
         },
       ),
+    );
+  }
+
+  buildBody() {
+    return Consumer<ConfigModel>(
+      builder: (context, configModel, child) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildCard(),
+            if (configModel.hasConfig)
+              Expanded(
+                child: GridView(
+                  padding: EdgeInsets.only(top: 0, bottom: 0),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2,
+                  ),
+                  children: buildGameList(),
+                  physics: AlwaysScrollableScrollPhysics(),
+                ),
+              ),
+            SizedBox(
+              height: 40.w,
+            ),
+            if (configModel.hasConfig) buildBottomButtons(),
+            //没拉到配置信息
+            if (!configModel.hasConfig)
+              TouchDownScale(
+                onTap: () {
+                  ConfigModel.getInstance().refresh();
+                },
+                child: ShadowContainer(
+                  height: 300.w,
+                  margin: EdgeInsets.all(40.w),
+                  color: ColorConstant.titleBg,
+                  child: Center(
+                    child: Text(
+                      $t('刷新配置信息'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: ColorConstant.title,
+                        fontSize: SizeConstant.h7,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
