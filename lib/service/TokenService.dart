@@ -1,9 +1,8 @@
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
-import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/log_util.dart';
-import 'package:kingspro/web3/AccountUtil.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -33,45 +32,13 @@ class TokenService {
     return result[0] as BigInt;
   }
 
-  static Future<String> approve(String address, BigInt amount) async {
-    final client = Web3Util().web3Client();
+  static Future<Transaction> approve(String address, BigInt amount) async {
     final contract = await gameTokenContract();
     final function = contract.function('approve');
-    Credentials credentials = await AccountUtil.getPrivateKey(client);
-    EthereumAddress ownAddress = await credentials.extractAddress();
-
-    //手续费价格
-    print('getGasPrice');
-    EtherAmount gasPrice = await client.getGasPrice();
-    print(gasPrice);
-
-    Transaction transaction = Transaction.callContract(
-      contract: contract,
-      function: function,
-      from: ownAddress,
-      gasPrice: gasPrice,
-      parameters: [EthereumAddress.fromHex(address), amount],
+    return TransactionService.contractTransaction(
+      contract,
+      function,
+      [EthereumAddress.fromHex(address), amount],
     );
-
-    BigInt maxGas = await client.estimateGas(
-      sender: transaction.from,
-      to: transaction.to,
-      data: transaction.data,
-      value: transaction.value,
-      gasPrice: transaction.gasPrice,
-    );
-    //1.2倍估算的gas，避免交易失败
-    maxGas = maxGas * BigInt.from(120) ~/ BigInt.from(100);
-    print(maxGas);
-
-    transaction = transaction.copyWith(maxGas: maxGas.toInt());
-
-    String approveHash = await client.sendTransaction(
-      credentials,
-      transaction,
-      chainId: SettingsModel().currentChain().chainId,
-    );
-    LogUtil.log('approve', approveHash);
-    return approveHash;
   }
 }

@@ -2,10 +2,9 @@ import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/TokenShopItem.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
-import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/string_util.dart';
-import 'package:kingspro/web3/AccountUtil.dart';
 import 'package:kingspro/web3/ContractUtil.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -43,46 +42,14 @@ class TokenShopService {
     );
   }
 
-  static Future<String> buy(BigInt price, int index) async {
-    final client = Web3Util().web3Client();
+  static Future<Transaction> buy(BigInt price, int index) async {
     final contract = await tokenShopContract();
-    final buyFunction = contract.function('buy');
-    Credentials credentials = await AccountUtil.getPrivateKey(client);
-    EthereumAddress ownAddress = await credentials.extractAddress();
-
-    //手续费价格
-    print('getGasPrice');
-    EtherAmount gasPrice = await client.getGasPrice();
-    print(gasPrice);
-
-    Transaction transaction = Transaction.callContract(
-      contract: contract,
-      function: buyFunction,
-      from: ownAddress,
-      value: EtherAmount.inWei(price),
-      gasPrice: gasPrice,
-      parameters: [BigInt.from(index)],
+    final function = contract.function('buy');
+    return TransactionService.contractTransaction(
+      contract,
+      function,
+      [BigInt.from(index)],
+      EtherAmount.inWei(price),
     );
-
-    BigInt maxGas = await client.estimateGas(
-      sender: transaction.from,
-      to: transaction.to,
-      data: transaction.data,
-      value: transaction.value,
-      gasPrice: transaction.gasPrice,
-    );
-    //1.2倍估算的gas，避免交易失败
-    maxGas = maxGas * BigInt.from(120) ~/ BigInt.from(100);
-    print(maxGas);
-
-    transaction = transaction.copyWith(maxGas: maxGas.toInt());
-
-    String buyHash = await client.sendTransaction(
-      credentials,
-      transaction,
-      chainId: SettingsModel().currentChain().chainId,
-    );
-    LogUtil.log('buy', buyHash);
-    return buyHash;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
@@ -152,48 +153,53 @@ class _TransferDialogState extends State<TransferDialog>
           );
           return;
         }
-        TransactionInfo transactionInfo = TransactionInfo(
-          TransactionService.valueTransaction(address, amount),
-          amount + ' ' + SettingsModel.getInstance().currentChain().symbol,
-        );
-        String hash =
-            await TransactionConfirmDialog.send(context, transactionInfo);
-        if (StringUtils.isEmpty(hash)) {
-          return;
+        try {
+          TransactionInfo transactionInfo = TransactionInfo(
+            TransactionService.valueTransaction(address, amount),
+            amount + ' ' + SettingsModel.getInstance().currentChain().symbol,
+          );
+          String hash =
+              await TransactionConfirmDialog.send(context, transactionInfo);
+          if (StringUtils.isEmpty(hash)) {
+            return;
+          }
+          setState(() {
+            addressEditingController.text = '';
+            amountEditingController.text = '';
+          });
+          confirmTransfer(hash);
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
         }
-        setState(() {
-          addressEditingController.text = '';
-          amountEditingController.text = '';
-        });
-        confirmBuy(hash);
       },
     );
   }
 
-  PeriodicTimer _buyPeriodicTimer;
+  PeriodicTimer _confirmPeriodicTimer;
 
-  void confirmBuy(String hash) async {
-    if (null != _buyPeriodicTimer) {
+  void confirmTransfer(String hash) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _confirmPeriodicTimer) {
       return;
     }
-    _buyPeriodicTimer = PeriodicTimer();
-    _buyPeriodicTimer.start(
+    _confirmPeriodicTimer = PeriodicTimer();
+    _confirmPeriodicTimer.start(
       milliseconds: 3000,
       maxCount: 100000,
       action: () async {
         try {
           int hashStatus = await TransactionService.getStatus(hash);
-          if (null == _buyPeriodicTimer || 0 == hashStatus) {
+          if (null == _confirmPeriodicTimer || 0 == hashStatus) {
             return;
           }
           if (2 == hashStatus) {
-            _buyPeriodicTimer.cancel(false);
+            _confirmPeriodicTimer.cancel(false);
             ToastUtil.showToast($t('转账失败'), type: ToastType.error);
             return;
           }
           if (1 == hashStatus) {
             AccountModel.getInstance().getBalance();
-            _buyPeriodicTimer.cancel(false);
+            _confirmPeriodicTimer.cancel(false);
             ToastUtil.showToast($t('转账成功'), type: ToastType.success);
           }
         } catch (e) {
@@ -201,21 +207,22 @@ class _TransferDialogState extends State<TransferDialog>
         } finally {}
       },
       onEnd: (max) {
-        _cancelBuyPeriodicTimer();
+        EasyLoading.dismiss();
+        _cancelConfirmPeriodicTimer();
       },
     );
   }
 
-  void _cancelBuyPeriodicTimer() {
-    if (null != _buyPeriodicTimer) {
-      _buyPeriodicTimer.cancel(false);
-      _buyPeriodicTimer = null;
+  void _cancelConfirmPeriodicTimer() {
+    if (null != _confirmPeriodicTimer) {
+      _confirmPeriodicTimer.cancel(false);
+      _confirmPeriodicTimer = null;
     }
   }
 
   @override
   void dispose() {
-    _cancelBuyPeriodicTimer();
+    _cancelConfirmPeriodicTimer();
     super.dispose();
   }
 

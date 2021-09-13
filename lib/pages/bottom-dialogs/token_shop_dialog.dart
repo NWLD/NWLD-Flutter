@@ -5,16 +5,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/TokenShopItem.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/TokenShopService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:provider/provider.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
@@ -90,14 +94,22 @@ class _ShopItemState extends State<TokenShopItemWidget>
       return;
     }
     try {
-      EasyLoading.show(dismissOnTap: true);
-      String buyHash =
+      Transaction transaction =
           await TokenShopService.buy(_shopItem.price, widget.index);
-      confirmBuy(buyHash);
+      TransactionInfo transactionInfo = TransactionInfo(
+        transaction,
+        NumberUtil.decimalNumString(num: _shopItem.price.toString()) +
+            ' ' +
+            SettingsModel.getInstance().currentChain().symbol,
+      );
+      String hash =
+          await TransactionConfirmDialog.send(context, transactionInfo);
+      if (StringUtils.isEmpty(hash)) {
+        return;
+      }
+      confirmBuy(hash);
     } catch (e) {
       ToastUtil.showToast(e.toString(), type: ToastType.error);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/entity/TalkingData.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/TalkingRoomService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
@@ -232,7 +236,7 @@ class _TalkingDialogState extends State<TalkingDialog>
                   width: 20.w,
                 ),
                 TouchDownScale(
-                  onTap: () {
+                  onTap: () async {
                     if (LoginDialog.shouldShow(context)) {
                       return;
                     }
@@ -240,7 +244,19 @@ class _TalkingDialogState extends State<TalkingDialog>
                       return;
                     }
                     try {
-                      TalkingRoomService.sendMsg(editingController.text);
+                      Transaction transaction =
+                          await TalkingRoomService.sendMsg(
+                              editingController.text);
+                      TransactionInfo transactionInfo = TransactionInfo(
+                        transaction,
+                        '0 ' +
+                            SettingsModel.getInstance().currentChain().symbol,
+                      );
+                      String hash = await TransactionConfirmDialog.send(
+                          context, transactionInfo);
+                      if (StringUtils.isEmpty(hash)) {
+                        return;
+                      }
                       setState(() {
                         editingController.text = '';
                       });

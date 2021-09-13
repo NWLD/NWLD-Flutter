@@ -6,21 +6,25 @@ import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/entity/FightReward.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/pages/game/fight_result_dialog.dart';
 import 'package:kingspro/pages/game/select_fight_dialog.dart';
 import 'package:kingspro/service/SimpleGameService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
-import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/auto_fontSize_text.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 import 'package:provider/provider.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
@@ -410,18 +414,25 @@ class _Game1DialogState extends State<Game1Dialog>
                   TouchDownScale(
                     onTap: () async {
                       try {
-                        EasyLoading.show(dismissOnTap: true);
-                        String hash = await SimpleGameService.fight(
+                        Transaction transaction = await SimpleGameService.fight(
                           _fightHero.heroInfo.tokenId,
                           widget.difficulty,
                           _fightCount,
                         );
+                        TransactionInfo transactionInfo = TransactionInfo(
+                          transaction,
+                          '0 ' +
+                              SettingsModel.getInstance().currentChain().symbol,
+                        );
+                        String hash = await TransactionConfirmDialog.send(
+                            context, transactionInfo);
+                        if (StringUtils.isEmpty(hash)) {
+                          return;
+                        }
                         getFightResult(hash, _fightCount);
                       } catch (e) {
                         ToastUtil.showToast(e.toString(),
                             type: ToastType.error);
-                      } finally {
-                        EasyLoading.dismiss();
                       }
                     },
                     child: ShadowContainer(

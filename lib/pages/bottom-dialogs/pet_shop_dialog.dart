@@ -6,10 +6,12 @@ import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/entity/PetShopInfo.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/open_card_dialog.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/service/PetShopService.dart';
 import 'package:kingspro/service/TokenService.dart';
@@ -22,6 +24,7 @@ import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:provider/provider.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
@@ -105,16 +108,27 @@ class _ShopItemState extends State<PetShopItemWidget>
       return;
     }
     try {
-      EasyLoading.show(dismissOnTap: true);
-      String hash = await TokenService.approve(
+      Transaction transaction = await TokenService.approve(
         ConfigModel.getInstance().config(ConfigConstants.petShop),
         NumberUtil.pow(num: '1000', exponent: 26),
       );
+      TransactionInfo transactionInfo = TransactionInfo(
+        transaction,
+        $t('授权 ') +
+            NumberUtil.decimalNumString(
+              num: NumberUtil.pow(num: '1000', exponent: 26).toString(),
+            ) +
+            ' ' +
+            ConfigConstants.gameTokenSymbol,
+      );
+      String hash =
+          await TransactionConfirmDialog.send(context, transactionInfo);
+      if (StringUtils.isEmpty(hash)) {
+        return;
+      }
       confirmApprove(hash);
     } catch (e) {
       ToastUtil.showToast(e.toString(), type: ToastType.error);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 
@@ -179,13 +193,23 @@ class _ShopItemState extends State<PetShopItemWidget>
       return;
     }
     try {
-      EasyLoading.show(dismissOnTap: true);
-      String buyHash = await PetShopService.buy(num);
-      confirmBuy(buyHash, num);
+      Transaction transaction = await PetShopService.buy(num);
+      TransactionInfo transactionInfo = TransactionInfo(
+        transaction,
+        NumberUtil.decimalNumString(
+              num: (_shopItem.price * BigInt.from(num)).toString(),
+            ) +
+            ' ' +
+            ConfigConstants.gameTokenSymbol,
+      );
+      String hash =
+          await TransactionConfirmDialog.send(context, transactionInfo);
+      if (StringUtils.isEmpty(hash)) {
+        return;
+      }
+      confirmBuy(hash, num);
     } catch (e) {
       ToastUtil.showToast(e.toString(), type: ToastType.error);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

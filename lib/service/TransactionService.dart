@@ -71,6 +71,7 @@ class TransactionService {
       ContractFunction function, List<dynamic> parameters,
       [EtherAmount value]) {
     return Transaction.callContract(
+      from: EthereumAddress.fromHex(AccountModel.getInstance().account),
       contract: contract,
       function: function,
       parameters: parameters,
