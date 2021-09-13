@@ -1,39 +1,31 @@
 import 'package:flutter/services.dart';
-import 'package:kingspro/constants/config.dart';
-import 'package:kingspro/entity/chain.dart';
-import 'package:kingspro/models/config_model.dart';
-import 'package:kingspro/models/settings_model.dart';
 import 'package:web3dart/web3dart.dart';
 
 class ContractUtil {
-  Future<DeployedContract> abiContract(
-      String json, String contractAddress, String name) async {
-    final abiCode = await rootBundle.loadString('assets/abi/$json.json');
+  static Future<DeployedContract> abiContract(
+    String fileName,
+    String contractAddress,
+    String name,
+  ) async {
+    final abiCode = await rootBundle.loadString('assets/abi/$fileName.json');
     final EthereumAddress address = EthereumAddress.fromHex(contractAddress);
     final contract =
         DeployedContract(ContractAbi.fromJson(abiCode, name), address);
     return contract;
   }
 
-  Future<DeployedContract> erc20Contract(String address, String symbol) async {
-    final contract = await ContractUtil().abiContract('erc20', address, symbol);
-    return contract;
-  }
-
-  Future<DeployedContract> gameTokenContract() async {
-    final contract = await ContractUtil().erc20Contract(
-        ConfigModel.getInstance().config(ConfigConstants.gameToken),
-        ConfigModel.getInstance().config(ConfigConstants.gameTokenSymbol));
-    return contract;
-  }
-
-  Future<ContractFunction> functionOf({
-    String json,
-    String contractAddress,
-    String name,
+  static ContractFunction functionOf(
+    DeployedContract contract,
     String functionName,
-  }) async {
-    DeployedContract contract = await abiContract(json, contractAddress, name);
+  ) {
     return contract.function(functionName);
+  }
+
+  static Future<DeployedContract> erc20Contract(
+    String address,
+    String symbol,
+  ) async {
+    final contract = await abiContract('erc20', address, symbol);
+    return contract;
   }
 }

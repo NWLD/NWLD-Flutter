@@ -10,12 +10,17 @@ import 'package:web3dart/web3dart.dart';
 import '../web3/Web3Util.dart';
 
 class TalkingRoomService {
-  static Future<TalkingDataList> getTalkingDataList(BigInt lastIndex) async {
-    final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
+  static Future<DeployedContract> talkingRoomContract() async {
+    final contract = await ContractUtil.abiContract(
         'talkingRoom',
         ConfigModel.getInstance().config(ConfigConstants.talkingRoom),
         'talkingRoom');
+    return contract;
+  }
+
+  static Future<TalkingDataList> getTalkingDataList(BigInt lastIndex) async {
+    final client = Web3Util().web3Client();
+    final contract = await talkingRoomContract();
     final function = contract.function('getTalkingData');
     List result = await client.call(
       contract: contract,
@@ -45,10 +50,7 @@ class TalkingRoomService {
 
   static Future<String> sendMsg(String msg) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'talkingRoom',
-        ConfigModel.getInstance().config(ConfigConstants.talkingRoom),
-        'talkingRoom');
+    final contract = await talkingRoomContract();
     final function = contract.function('sendMsg');
     Credentials credentials = await AccountUtil.getPrivateKey(client);
     EthereumAddress ownAddress = await credentials.extractAddress();

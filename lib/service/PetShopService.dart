@@ -10,10 +10,15 @@ import 'package:web3dart/web3dart.dart';
 import '../web3/Web3Util.dart';
 
 class PetShopService {
+  static Future<DeployedContract> petShopContract() async {
+    final contract = await ContractUtil.abiContract('petShop',
+        ConfigModel.getInstance().config(ConfigConstants.petShop), 'petShop');
+    return contract;
+  }
+
   static Future<PetShopInfo> getInfo() async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract('petShop',
-        ConfigModel.getInstance().config(ConfigConstants.petShop), 'petShop');
+    final contract = await petShopContract();
     final infoFunction = contract.function('shopInfo');
     List result = await client.call(
       contract: contract,
@@ -34,8 +39,7 @@ class PetShopService {
 
   static Future<String> buy(int num) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract('petShop',
-        ConfigModel.getInstance().config(ConfigConstants.petShop), 'petShop');
+    final contract = await petShopContract();
     final buyFunction = contract.function('buy');
     Credentials credentials = await AccountUtil.getPrivateKey(client);
     EthereumAddress ownAddress = await credentials.extractAddress();

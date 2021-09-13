@@ -13,12 +13,17 @@ import 'package:web3dart/web3dart.dart';
 import '../web3/Web3Util.dart';
 
 class SimpleGameService {
-  static Future<FightReward> getFightReward(int difficulty) async {
-    final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
+  static Future<DeployedContract> simpleGameContract() async {
+    final contract = await ContractUtil.abiContract(
         'simpleGame',
         ConfigModel.getInstance().config(ConfigConstants.simpleGame),
         'simpleGame');
+    return contract;
+  }
+
+  static Future<FightReward> getFightReward(int difficulty) async {
+    final client = Web3Util().web3Client();
+    final contract = await simpleGameContract();
     final function = contract.function('getFightReward');
     List result = await client.call(
       contract: contract,
@@ -30,10 +35,7 @@ class SimpleGameService {
 
   static Future<List<FightPet>> getFightHeroes(int difficulty) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'simpleGame',
-        ConfigModel.getInstance().config(ConfigConstants.simpleGame),
-        'simpleGame');
+    final contract = await simpleGameContract();
     final function = contract.function('getFightPets');
     List result = await client.call(
       contract: contract,
@@ -65,10 +67,7 @@ class SimpleGameService {
 
   static Future<String> fight(BigInt tokenId, int difficulty, int count) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'simpleGame',
-        ConfigModel.getInstance().config(ConfigConstants.simpleGame),
-        'simpleGame');
+    final contract = await simpleGameContract();
     String fun = difficulty == 3
         ? 'fight3'
         : difficulty == 2
@@ -116,10 +115,7 @@ class SimpleGameService {
 
   static Future<List<int>> getFightResults(BigInt tokenId) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'simpleGame',
-        ConfigModel.getInstance().config(ConfigConstants.simpleGame),
-        'simpleGame');
+    final contract = await simpleGameContract();
     final function = contract.function('getFightResults');
     List result = await client.call(
       contract: contract,

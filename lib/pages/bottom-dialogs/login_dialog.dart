@@ -125,6 +125,7 @@ class _LoginDialogState extends State<LoginDialog>
   buildImportButton() {
     return BaseButton(
       title: $t('导入账户'),
+      bg: ColorConstant.bg_level_9,
       onTap: () async {
         String name = '';
         if (null != nameEditingController.text) {

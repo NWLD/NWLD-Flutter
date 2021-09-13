@@ -11,12 +11,17 @@ import 'package:web3dart/web3dart.dart';
 import '../web3/Web3Util.dart';
 
 class TokenPoolService {
+  static Future<DeployedContract> tokenPoolContract() async {
+    final contract = await ContractUtil.abiContract(
+        'tokenPool',
+        ConfigModel.getInstance().config(ConfigConstants.tokenShop),
+        'tokenPool');
+    return contract;
+  }
+
   static Future<TokenPoolInfo> getInfo() async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'tokenShop',
-        ConfigModel.getInstance().config(ConfigConstants.tokenShop),
-        'tokenShop');
+    final contract = await tokenPoolContract();
     final infoFunction = contract.function('info');
     List result = await client.call(
       contract: contract,
@@ -29,10 +34,7 @@ class TokenPoolService {
 
   static Future<BigInt> estimateBuy(String input) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'tokenPool',
-        ConfigModel.getInstance().config(ConfigConstants.tokenShop),
-        'tokenPool');
+    final contract = await tokenPoolContract();
     final estimateBuyFunction = contract.function('estimateBuy');
     List result = await client.call(
       contract: contract,
@@ -45,10 +47,7 @@ class TokenPoolService {
 
   static Future<String> buy(String input, String requestAmount) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'tokenPool',
-        ConfigModel.getInstance().config(ConfigConstants.tokenShop),
-        'tokenPool');
+    final contract = await tokenPoolContract();
     final buyFunction = contract.function('buy');
     Credentials credentials = await AccountUtil.getPrivateKey(client);
     EthereumAddress ownAddress = await credentials.extractAddress();

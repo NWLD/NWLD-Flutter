@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/widgets/auto_fontSize_text.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
@@ -150,22 +152,20 @@ class _TransferDialogState extends State<TransferDialog>
           );
           return;
         }
-        try {
-          EasyLoading.show(dismissOnTap: true);
-          String hash = await TransactionService.send(address, amount);
-          setState(() {
-            addressEditingController.text = '';
-            amountEditingController.text = '';
-          });
-          confirmBuy(hash);
-        } catch (e) {
-          ToastUtil.showToast(
-            e.toString(),
-            type: ToastType.error,
-          );
-        } finally {
-          EasyLoading.dismiss();
+        TransactionInfo transactionInfo = TransactionInfo(
+          TransactionService.valueTransaction(address, amount),
+          amount + ' ' + SettingsModel.getInstance().currentChain().symbol,
+        );
+        String hash =
+            await TransactionConfirmDialog.send(context, transactionInfo);
+        if (StringUtils.isEmpty(hash)) {
+          return;
         }
+        setState(() {
+          addressEditingController.text = '';
+          amountEditingController.text = '';
+        });
+        confirmBuy(hash);
       },
     );
   }
@@ -173,7 +173,6 @@ class _TransferDialogState extends State<TransferDialog>
   PeriodicTimer _buyPeriodicTimer;
 
   void confirmBuy(String hash) async {
-    EasyLoading.show(dismissOnTap: true);
     if (null != _buyPeriodicTimer) {
       return;
     }
@@ -202,7 +201,6 @@ class _TransferDialogState extends State<TransferDialog>
         } finally {}
       },
       onEnd: (max) {
-        EasyLoading.dismiss();
         _cancelBuyPeriodicTimer();
       },
     );
@@ -216,6 +214,12 @@ class _TransferDialogState extends State<TransferDialog>
   }
 
   @override
+  void dispose() {
+    _cancelBuyPeriodicTimer();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BottomDialogContainer(
       title: $t('转账'),
@@ -226,22 +230,25 @@ class _TransferDialogState extends State<TransferDialog>
           children: [
             Padding(
               padding: EdgeInsets.only(left: 40.w, right: 40.w),
-              child: AutoFontSizeText(
-                text: null == AccountModel.getInstance().balance
-                    ? ''
-                    : NumberUtil.decimalNumString(
-                          num: AccountModel.getInstance().balance.toString(),
-                          fractionDigits: 4,
-                        ) +
-                        ' ' +
-                        SettingsModel().currentChain().symbol,
-                minfontSize: 10,
-                style: TextStyle(
-                  fontSize: SizeConstant.h7,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: Consumer<AccountModel>(
+                  builder: (context, accountModel, child) {
+                return AutoFontSizeText(
+                  text: null == accountModel.balance
+                      ? ''
+                      : NumberUtil.decimalNumString(
+                            num: accountModel.balance.toString(),
+                            fractionDigits: 4,
+                          ) +
+                          ' ' +
+                          SettingsModel().currentChain().symbol,
+                  minfontSize: 10,
+                  style: TextStyle(
+                    fontSize: SizeConstant.h7,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }),
             ),
             buildAddressTextField(),
             buildAmountTextField(),

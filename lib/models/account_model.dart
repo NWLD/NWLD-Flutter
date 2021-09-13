@@ -5,7 +5,7 @@ import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/aes_util.dart';
 import 'package:kingspro/util/string_util.dart';
-import 'package:kingspro/web3/TokenUtil.dart';
+import 'package:kingspro/web3/BalanceUtil.dart';
 
 import '../util/cache_util.dart';
 
@@ -80,9 +80,9 @@ class AccountModel extends ChangeNotifier {
   }
 
   void getBalance() async {
-    balance = await TokenUtil.getBalance(account);
+    balance = await BalanceUtil.getBalance(account);
     Chain chain = SettingsModel().currentChain();
-    gameTokenBalance = await TokenUtil.getERC20Balance(
+    gameTokenBalance = await BalanceUtil.getERC20Balance(
       account,
       ConfigModel.getInstance().config(ConfigConstants.gameToken),
       ConfigModel.getInstance().config(ConfigConstants.gameTokenSymbol),

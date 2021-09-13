@@ -11,7 +11,7 @@ class PetService {
     String account,
   ) async {
     final client = Web3Util().web3Client();
-    final heroContract = await ContractUtil().abiContract(
+    final heroContract = await ContractUtil.abiContract(
         'pet', ConfigModel.getInstance().config(ConfigConstants.petNFT), 'Pet');
     final tokensOfFunction = heroContract.function('tokensOf');
     List result = await client.call(

@@ -11,8 +11,11 @@ class ConfigService {
     LogUtil.log('getConfigs', 'start');
     Map<String, String> map = {};
     final client = Web3Util().web3Client();
-    final configContract = await ContractUtil().abiContract('config',
-        SettingsModel.getInstance().currentChain().configAddress, 'config');
+    final configContract = await ContractUtil.abiContract(
+      'config',
+      SettingsModel.getInstance().currentChain().configAddress,
+      'config',
+    );
     final labelListAddressFunction =
         configContract.function('labelListAddress');
     List result = await client.call(

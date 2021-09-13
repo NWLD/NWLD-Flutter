@@ -12,12 +12,17 @@ import 'package:web3dart/web3dart.dart';
 import '../web3/Web3Util.dart';
 
 class TokenShopService {
-  static Future<TokenShopItem> getInfo(int index) async {
-    final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
+  static Future<DeployedContract> tokenShopContract() async {
+    final contract = await ContractUtil.abiContract(
         'tokenShop',
         ConfigModel.getInstance().config(ConfigConstants.tokenShop),
         'tokenShop');
+    return contract;
+  }
+
+  static Future<TokenShopItem> getInfo(int index) async {
+    final client = Web3Util().web3Client();
+    final contract = await tokenShopContract();
     final infoFunction = contract.function('info');
     String account = AccountModel.getInstance().account;
     if (StringUtils.isEmpty(account)) {
@@ -40,10 +45,7 @@ class TokenShopService {
 
   static Future<String> buy(BigInt price, int index) async {
     final client = Web3Util().web3Client();
-    final contract = await ContractUtil().abiContract(
-        'tokenShop',
-        ConfigModel.getInstance().config(ConfigConstants.tokenShop),
-        'tokenShop');
+    final contract = await tokenShopContract();
     final buyFunction = contract.function('buy');
     Credentials credentials = await AccountUtil.getPrivateKey(client);
     EthereumAddress ownAddress = await credentials.extractAddress();

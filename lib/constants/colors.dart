@@ -6,7 +6,7 @@ class ColorConstant {
   static const Color appBackground = Color(0xFFF48FB1); //背景
   static const Color homeCardBg = Color(0xFF2c6eF6);
   static const Color title = Color(0xFFFFFFFF); //标题文字颜色
-  static const Color des = Color(0xFFCCCCCC); //描述文字颜色
+  static const Color des = Color(0xFFEEEEEE); //描述文字颜色
   static const Color titleBg = Color(0xFFE91E63);
 
   static const Color bg_level_1 = Color(0xFF888888);
