@@ -17,6 +17,7 @@ class BaseButton extends StatelessWidget {
   final double height;
   final EdgeInsetsGeometry margin;
   final EdgeInsetsGeometry padding;
+  final Widget child;
 
   BaseButton({
     Key key,
@@ -29,6 +30,7 @@ class BaseButton extends StatelessWidget {
     this.bg,
     this.margin,
     this.padding,
+    this.child,
   }) : super(key: key);
 
   @override
@@ -41,16 +43,17 @@ class BaseButton extends StatelessWidget {
         padding: padding ?? EdgeInsets.all(10.w),
         margin: margin,
         color: bg ?? ColorConstant.titleBg,
-        child: Center(
-          child: Text(
-            title ?? 'Button',
-            style: TextStyle(
-              color: color ?? ColorConstant.title,
-              fontSize: fontSize ?? SizeConstant.h7,
-              fontWeight: FontWeight.bold,
+        child: child ??
+            Center(
+              child: Text(
+                title ?? 'Button',
+                style: TextStyle(
+                  color: color ?? ColorConstant.title,
+                  fontSize: fontSize ?? SizeConstant.h7,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

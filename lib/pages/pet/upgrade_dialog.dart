@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/sizes.dart';
 import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/pages/pet/upgrade1.dart';
+import 'package:kingspro/pages/pet/upgrade2.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 
 import '../../l10n/base_localizations.dart';
@@ -107,6 +108,9 @@ class _DialogState extends State<UpgradeDialog>
             height: 40.w,
           ),
           UpgradeItem1(
+            petInfo: _petInfo,
+          ),
+          UpgradeItem2(
             petInfo: _petInfo,
           ),
         ],

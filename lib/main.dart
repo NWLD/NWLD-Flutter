@@ -61,7 +61,7 @@ class MyAppState extends State<MyApp> {
                   darkTheme: ThemeConfig.lightTheme,
                   themeMode: ThemeMode.light,
                   onGenerateTitle: (context) =>
-                      BaseLocalizations.$t('N WLD', context),
+                      BaseLocalizations.$t('NWLD', context),
                   // locale
                   localizationsDelegates: [
                     BaseLocalizationsDelegate(),

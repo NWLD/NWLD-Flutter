@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/entity/PetInfo.dart';
@@ -188,6 +189,7 @@ class _AssetsDialogState extends State<AssetsDialog>
   }
 
   void getHeroList() async {
+    EasyLoading.show(dismissOnTap: true);
     try {
       List<PetInfo> pets =
           await PetService.getPets(AccountModel.getInstance().account);
@@ -197,6 +199,8 @@ class _AssetsDialogState extends State<AssetsDialog>
       AccountModel.getInstance().pets = pets;
     } catch (e) {
       ToastUtil.showToast(e.toString(), type: ToastType.error);
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 

@@ -31,6 +31,7 @@ class ConfigService {
           ConfigConstants.simpleGame,
           ConfigConstants.talkingRoom,
           ConfigConstants.petUpgrade1,
+          ConfigConstants.petUpgrade2,
         ]
       ],
     );
@@ -49,6 +50,8 @@ class ConfigService {
         (addressList[6] as EthereumAddress).hexEip55;
     map[ConfigConstants.petUpgrade1] =
         (addressList[7] as EthereumAddress).hexEip55;
+    map[ConfigConstants.petUpgrade2] =
+        (addressList[8] as EthereumAddress).hexEip55;
     LogUtil.log('getConfigs', map);
     return map;
   }

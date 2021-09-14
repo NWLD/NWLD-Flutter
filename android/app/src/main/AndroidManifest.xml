@@ -15,7 +15,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="N WLD"
+        android:label="NWLD"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
