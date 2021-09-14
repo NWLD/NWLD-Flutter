@@ -65,6 +65,24 @@ class PetService {
     return (result[0] as EthereumAddress).hexEip55;
   }
 
+  static Future<List<int>> getRareWhoList(int rare) async {
+    final client = Web3Util().web3Client();
+    final contract = await petContract();
+    final function = contract.function('getRareWhoList');
+
+    List result = await client.call(
+      contract: contract,
+      function: function,
+      params: [BigInt.from(rare)],
+    );
+    List list = result[0] as List;
+    List<int> intList = [];
+    for (int index = 0; index < list.length; index++) {
+      intList.add((list[index] as BigInt).toInt());
+    }
+    return intList;
+  }
+
   static Future<Transaction> approveAll(String address) async {
     final contract = await petContract();
     final function = contract.function('setApprovalForAll');

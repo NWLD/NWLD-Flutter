@@ -2,26 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/entity/PetInfo.dart';
-import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
-import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import '../bottom-dialogs/bottom_dialog_container.dart';
 
-typedef OnPetSelected = void Function(PetInfo pet);
+typedef OnWhoSelected = void Function(int who);
 
 class PetItem extends StatefulWidget {
   final int index;
   final PetInfo petInfo;
-  final OnPetSelected onPetSelected;
+  final int who;
+  final OnWhoSelected onWhoSelected;
 
   PetItem({
     this.index,
     this.petInfo,
-    this.onPetSelected,
+    this.who,
+    this.onWhoSelected,
   });
 
   @override
@@ -43,7 +44,7 @@ class _ItemState extends State<PetItem> with BaseLocalizationsStateMixin {
   Widget build(BuildContext context) {
     return TouchDownScale(
       onTap: () {
-        widget.onPetSelected(_petInfo);
+        widget.onWhoSelected(widget.who);
         Navigator.of(context).pop();
       },
       child: ShadowContainer(
@@ -57,7 +58,7 @@ class _ItemState extends State<PetItem> with BaseLocalizationsStateMixin {
             Row(
               children: [
                 Image.asset(
-                  'assets/pet/pet_${_petInfo.who}.png',
+                  'assets/pet/pet_${widget.who}.png',
                   width: 200.w,
                   height: 200.w,
                   fit: BoxFit.fill,
@@ -66,7 +67,7 @@ class _ItemState extends State<PetItem> with BaseLocalizationsStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      $t('pet_${_petInfo.who}'),
+                      $t('pet_${widget.who}'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: SizeConstant.h8,
@@ -109,23 +110,23 @@ class _ItemState extends State<PetItem> with BaseLocalizationsStateMixin {
   }
 }
 
-class SelectUpgradePetDialog extends StatefulWidget {
+class SelectSwitchRolePetDialog extends StatefulWidget {
   final PetInfo petInfo;
-  final OnPetSelected onPetSelected;
+  final OnWhoSelected onWhoSelected;
 
-  SelectUpgradePetDialog({
+  SelectSwitchRolePetDialog({
     Key key,
     this.petInfo,
-    this.onPetSelected,
+    this.onWhoSelected,
   }) : super(key: key);
 
   @override
   _DialogState createState() => _DialogState();
 }
 
-class _DialogState extends State<SelectUpgradePetDialog>
+class _DialogState extends State<SelectSwitchRolePetDialog>
     with BaseLocalizationsStateMixin {
-  List<PetInfo> _petList = <PetInfo>[];
+  List<int> _whoList = <int>[];
 
   ScrollController _controller = ScrollController(
     keepScrollOffset: true,
@@ -137,30 +138,18 @@ class _DialogState extends State<SelectUpgradePetDialog>
     super.initState();
   }
 
-  void getPetList() {
-    List<PetInfo> pets = [];
-    pets.addAll(AccountModel.getInstance().pets);
-    List<PetInfo> list = [];
-    for (int index = 0; index < pets.length; index++) {
-      if (widget.petInfo.who == pets[index].who &&
-          widget.petInfo.level == pets[index].level &&
-          widget.petInfo.tokenId != pets[index].tokenId) {
-        list.add(pets[index]);
+  void getPetList() async {
+    List<int> intList = await PetService.getRareWhoList(widget.petInfo.rare);
+    List<int> whoList = [];
+    for (int index = 0; index < intList.length; index++) {
+      if (widget.petInfo.who != intList[index] &&
+          !whoList.contains(intList[index])) {
+        whoList.add(intList[index]);
       }
     }
-    if (0 == list.length) {
-      Future.delayed(
-        Duration(
-          milliseconds: 50,
-        ),
-        () {
-          Navigator.of(context).pop();
-          ToastUtil.showToast($t('没有可供选择的卡牌'), type: ToastType.warning);
-        },
-      );
-      return;
-    }
-    _petList = list;
+    setState(() {
+      _whoList = whoList;
+    });
   }
 
   @override
@@ -175,12 +164,13 @@ class _DialogState extends State<SelectUpgradePetDialog>
       title: $t("选择卡牌"),
       content: ListView.builder(
         controller: _controller,
-        itemCount: _petList.length,
+        itemCount: _whoList.length,
         itemBuilder: (context, index) {
           return PetItem(
             index: index,
-            petInfo: _petList[index],
-            onPetSelected: widget.onPetSelected,
+            petInfo: widget.petInfo,
+            who: _whoList[index],
+            onWhoSelected: widget.onWhoSelected,
           );
         },
       ),

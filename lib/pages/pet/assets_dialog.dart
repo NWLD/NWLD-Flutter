@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/pet/switch_role_dialog.dart';
 import 'package:kingspro/pages/pet/upgrade_dialog.dart';
 import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
@@ -116,7 +117,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
                 child: ShadowContainer(
                   width: 100.w,
                   height: 48.w,
-                  color: ColorConstant.bg_level_4,
+                  color: ColorConstant.titleBg,
                   child: Center(
                     child: Text(
                       $t('升级'),
@@ -133,16 +134,16 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
               ),
               TouchDownScale(
                 onTapDown: (ev) {},
-                onTap: () {},
+                onTap: switchRole,
                 child: ShadowContainer(
                   width: 100.w,
                   height: 48.w,
-                  color: ColorConstant.bg_level_7,
+                  color: ColorConstant.bg_level_9,
                   child: Center(
                     child: Text(
                       $t('变身'),
                       style: TextStyle(
-                        color: ColorConstant.titleBg,
+                        color: ColorConstant.title,
                         fontSize: SizeConstant.h8,
                       ),
                     ),
@@ -160,6 +161,18 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
     var result = await BottomDialog.showDialog(
       context,
       UpgradeDialog(
+        petInfo: heroInfo,
+      ),
+    );
+    if (null != result) {
+      widget.onItemChanged();
+    }
+  }
+
+  void switchRole() async {
+    var result = await BottomDialog.showDialog(
+      context,
+      SwitchRoleDialog(
         petInfo: heroInfo,
       ),
     );
