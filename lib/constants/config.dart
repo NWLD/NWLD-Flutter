@@ -8,6 +8,9 @@ class ConfigConstants {
   static String tokenShop = 'tokenShop'; //代币商店的合约地址
   static String simpleGame = 'simpleGame'; //前3个游戏合约，共用
   static String talkingRoom = 'talkingRoom'; //聊天室合约地址
+  static String petUpgrade1 = 'petUpgrade1'; //升级1 使用代币概率升级
+  static String petUpgrade2 = 'petUpgrade2'; //升级2 使用同种卡牌升级
+  static String petSwitchRole = 'petSwitchRole'; //同一稀有度内切换角色
 
   //TODO 以下是统计的标签
   static String buyPetCost = 'buyPetCost'; //购买消费
@@ -25,4 +28,5 @@ class ConfigConstants {
   static String switchPetCount = 'switchPetCount'; //切换次数
 
   static String gameTokenSymbol = 'NWLD';
+  static String deadAddress = "0x000000000000000000000000000000000000dEaD";
 }

@@ -104,4 +104,11 @@ class StringUtils {
         "****" +
         account.substring(account.length - 4);
   }
+
+  static bool isEqualIgnore(String a, String b) {
+    if (null == a || null == b) {
+      return false;
+    }
+    return a.toLowerCase() == b.toLowerCase();
+  }
 }

@@ -125,6 +125,12 @@ class PetInfo {
     return BigInt.from(fight).toInt();
   }
 
+  int upgradeFight() {
+    num fight =
+        baseFight * (100 + buffer) * pow(2, level) * getRareBuffer() / 10000;
+    return BigInt.from(fight).toInt();
+  }
+
   @override
   String toString() {
     return 'tokenId = $tokenId\n' +

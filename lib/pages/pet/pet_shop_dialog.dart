@@ -29,7 +29,7 @@ import 'package:web3dart/web3dart.dart';
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import '../../widgets/touch_down_scale.dart';
-import 'bottom_dialog_container.dart';
+import '../bottom-dialogs/bottom_dialog_container.dart';
 
 class PetShopItemWidget extends StatefulWidget {
   @override

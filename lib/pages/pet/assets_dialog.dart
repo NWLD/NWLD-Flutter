@@ -4,22 +4,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/pages/pet/upgrade_dialog.dart';
 import 'package:kingspro/service/PetService.dart';
+import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/toast_util.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
-import 'bottom_dialog_container.dart';
+import '../bottom-dialogs/bottom_dialog_container.dart';
 
 class HeroItem extends StatefulWidget {
   final int index;
   final PetInfo heroInfo;
+  final Function onItemChanged;
 
   HeroItem({
     this.index,
     this.heroInfo,
+    this.onItemChanged,
   });
 
   @override
@@ -35,6 +39,12 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
   void initState() {
     heroInfo = widget.heroInfo;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant HeroItem oldWidget) {
+    heroInfo = widget.heroInfo;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -101,7 +111,7 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
               ),
               TouchDownScale(
                 onTapDown: (ev) {},
-                onTap: () {},
+                onTap: upgrade,
                 child: ShadowContainer(
                   width: 100.w,
                   height: 48.w,
@@ -144,6 +154,18 @@ class _HeroItemState extends State<HeroItem> with BaseLocalizationsStateMixin {
       ),
     );
   }
+
+  void upgrade() async {
+    var result = await BottomDialog.showDialog(
+      context,
+      UpgradeDialog(
+        petInfo: heroInfo,
+      ),
+    );
+    if (null != result) {
+      widget.onItemChanged();
+    }
+  }
 }
 
 class AssetsDialog extends StatefulWidget {
@@ -172,6 +194,7 @@ class _AssetsDialogState extends State<AssetsDialog>
       setState(() {
         _petList = pets;
       });
+      AccountModel.getInstance().pets = pets;
     } catch (e) {
       ToastUtil.showToast(e.toString(), type: ToastType.error);
     }
@@ -181,6 +204,10 @@ class _AssetsDialogState extends State<AssetsDialog>
   dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void onItemChanged() {
+    getHeroList();
   }
 
   @override
@@ -194,6 +221,7 @@ class _AssetsDialogState extends State<AssetsDialog>
           return HeroItem(
             index: index,
             heroInfo: _petList[index],
+            onItemChanged: onItemChanged,
           );
         },
       ),

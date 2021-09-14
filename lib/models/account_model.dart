@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kingspro/constants/config.dart';
+import 'package:kingspro/entity/PetInfo.dart';
 import 'package:kingspro/entity/chain.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
@@ -98,4 +99,6 @@ class AccountModel extends ChangeNotifier {
     gameTokenBalance = null;
     onStateChanged();
   }
+
+  List<PetInfo> pets;
 }
