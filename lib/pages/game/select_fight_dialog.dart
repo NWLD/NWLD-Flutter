@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
+import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/FightPet.dart';
-import 'package:kingspro/service/SimpleGameService.dart';
+import 'package:kingspro/models/config_model.dart';
+import 'package:kingspro/service/GameService.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
 import 'package:kingspro/widgets/touch_down_scale.dart';
 
@@ -67,12 +69,7 @@ class _FightHeroItemState extends State<FightHeroItem>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      $t('pet_${fightHero.heroInfo.who}') +
-                          " " +
-                          fightHero.heroInfo.rareLabel() +
-                          " " +
-                          fightHero.heroInfo.level.toString() +
-                          "星",
+                      $t('pet_${fightHero.heroInfo.who}'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: SizeConstant.h8,
@@ -83,7 +80,12 @@ class _FightHeroItemState extends State<FightHeroItem>
                       height: 6.w,
                     ),
                     Text(
-                      fightHero.heroInfo.getFight().toString() + " 战力",
+                      fightHero.heroInfo.rareLabel() +
+                          " " +
+                          fightHero.heroInfo.level.toString() +
+                          "星 " +
+                          fightHero.heroInfo.getFight().toString() +
+                          " 战力",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: SizeConstant.h8,
@@ -152,8 +154,14 @@ class _SelectFightHeroDialogState extends State<SelectFightHeroDialog>
   }
 
   void getHeroList() async {
-    List<FightPet> heroes =
-        await SimpleGameService.getFightHeroes(widget.difficulty);
+    String config = ConfigConstants.game3;
+    if (2 == widget.difficulty) {
+      config = ConfigConstants.game2;
+    } else if (1 == widget.difficulty) {
+      config = ConfigConstants.game1;
+    }
+    String address = ConfigModel.getInstance().config(config);
+    List<FightPet> heroes = await GameService(config, address).getFightPets();
     setState(() {
       _heroList = heroes;
     });

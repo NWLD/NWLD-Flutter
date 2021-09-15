@@ -14,7 +14,7 @@ import 'package:kingspro/pages/pet/pet_shop_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/setting_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/talking_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/token_shop_dialog.dart';
-import 'package:kingspro/pages/game/game1_dialog.dart';
+import 'package:kingspro/pages/game/game_dialog.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/web3/Web3Util.dart';
@@ -331,7 +331,7 @@ class _GameHomePageState extends State<GameHomePage>
             onTap: () {
               BottomDialog.showDialog(
                 context,
-                Game1Dialog(
+                GameDialog(
                   difficulty: index + 1,
                 ),
               );

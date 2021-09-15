@@ -8,12 +8,13 @@ import 'package:kingspro/entity/FightPet.dart';
 import 'package:kingspro/entity/FightReward.dart';
 import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/pages/game/fight_result_dialog.dart';
 import 'package:kingspro/pages/game/select_fight_dialog.dart';
-import 'package:kingspro/service/SimpleGameService.dart';
+import 'package:kingspro/service/GameService.dart';
 import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
@@ -30,30 +31,40 @@ import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
 import '../bottom-dialogs/bottom_dialog_container.dart';
 
-class Game1Dialog extends StatefulWidget {
+class GameDialog extends StatefulWidget {
   final int difficulty;
 
-  Game1Dialog({Key key, this.difficulty = 1}) : super(key: key);
+  GameDialog({Key key, this.difficulty = 1}) : super(key: key);
 
   @override
-  _Game1DialogState createState() => _Game1DialogState();
+  _GameDialogState createState() => _GameDialogState();
 }
 
-class _Game1DialogState extends State<Game1Dialog>
+class _GameDialogState extends State<GameDialog>
     with BaseLocalizationsStateMixin {
   FightPet _fightHero;
   FightReward _fightReward;
   int _fightCount = 1;
 
+  String _address;
+  GameService _gameService;
+
   @override
   void initState() {
+    String config = ConfigConstants.game3;
+    if (2 == widget.difficulty) {
+      config = ConfigConstants.game2;
+    } else if (1 == widget.difficulty) {
+      config = ConfigConstants.game1;
+    }
+    _address = ConfigModel.getInstance().config(config);
+    _gameService = GameService(config, _address);
     getFightInfo();
     super.initState();
   }
 
   void getFightInfo() async {
-    FightReward fightReward =
-        await SimpleGameService.getFightReward(widget.difficulty);
+    FightReward fightReward = await _gameService.getFightReward();
     setState(() {
       _fightReward = fightReward;
     });
@@ -82,8 +93,8 @@ class _Game1DialogState extends State<Game1Dialog>
           if (1 == hashStatus) {
             AccountModel.getInstance().getBalance();
             _periodicTimer.cancel(false);
-            List<int> results = await SimpleGameService.getFightResults(
-                _fightHero.heroInfo.tokenId);
+            List<int> results =
+                await _gameService.getFightResults(_fightHero.heroInfo.tokenId);
             setState(() {
               _fightHero.fightCount -= fightCount;
               _fightCount = 1;
@@ -414,9 +425,8 @@ class _Game1DialogState extends State<Game1Dialog>
                   TouchDownScale(
                     onTap: () async {
                       try {
-                        Transaction transaction = await SimpleGameService.fight(
+                        Transaction transaction = await _gameService.fight(
                           _fightHero.heroInfo.tokenId,
-                          widget.difficulty,
                           _fightCount,
                         );
                         TransactionInfo transactionInfo = TransactionInfo(
