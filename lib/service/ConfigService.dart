@@ -28,11 +28,15 @@ class ConfigService {
           ConfigConstants.petShop,
           ConfigConstants.statistics,
           ConfigConstants.tokenShop,
-          ConfigConstants.simpleGame,
           ConfigConstants.talkingRoom,
           ConfigConstants.petUpgrade1,
           ConfigConstants.petUpgrade2,
           ConfigConstants.petSwitchRole,
+          ConfigConstants.game1,
+          ConfigConstants.game2,
+          ConfigConstants.game3,
+          ConfigConstants.tokenPool,
+          ConfigConstants.gamePool,
         ]
       ],
     );
@@ -45,16 +49,21 @@ class ConfigService {
         (addressList[3] as EthereumAddress).hexEip55;
     map[ConfigConstants.tokenShop] =
         (addressList[4] as EthereumAddress).hexEip55;
-    map[ConfigConstants.simpleGame] =
-        (addressList[5] as EthereumAddress).hexEip55;
     map[ConfigConstants.talkingRoom] =
-        (addressList[6] as EthereumAddress).hexEip55;
+        (addressList[5] as EthereumAddress).hexEip55;
     map[ConfigConstants.petUpgrade1] =
-        (addressList[7] as EthereumAddress).hexEip55;
+        (addressList[6] as EthereumAddress).hexEip55;
     map[ConfigConstants.petUpgrade2] =
-        (addressList[8] as EthereumAddress).hexEip55;
+        (addressList[7] as EthereumAddress).hexEip55;
     map[ConfigConstants.petSwitchRole] =
-        (addressList[9] as EthereumAddress).hexEip55;
+        (addressList[8] as EthereumAddress).hexEip55;
+    map[ConfigConstants.game1] = (addressList[9] as EthereumAddress).hexEip55;
+    map[ConfigConstants.game2] = (addressList[10] as EthereumAddress).hexEip55;
+    map[ConfigConstants.game3] = (addressList[11] as EthereumAddress).hexEip55;
+    map[ConfigConstants.tokenPool] =
+        (addressList[12] as EthereumAddress).hexEip55;
+    map[ConfigConstants.gamePool] =
+        (addressList[13] as EthereumAddress).hexEip55;
     LogUtil.log('getConfigs', map);
     return map;
   }

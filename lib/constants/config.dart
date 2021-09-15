@@ -6,12 +6,15 @@ class ConfigConstants {
   static String petShop = 'petShop'; //Pet购买合约地址
   static String statistics = 'statistics'; //Data统计的合约地址
   static String tokenShop = 'tokenShop'; //代币商店的合约地址
-  static String simpleGame = 'simpleGame'; //前3个游戏合约，共用
   static String talkingRoom = 'talkingRoom'; //聊天室合约地址
   static String petUpgrade1 = 'petUpgrade1'; //升级1 使用代币概率升级
   static String petUpgrade2 = 'petUpgrade2'; //升级2 使用同种卡牌升级
   static String petSwitchRole = 'petSwitchRole'; //同一稀有度内切换角色
-
+  static String game1 = 'game1';
+  static String game2 = 'game2';
+  static String game3 = 'game3';
+  static String tokenPool = 'tokenPool';
+  static String gamePool = 'gamePool';
   //TODO 以下是统计的标签
   static String buyPetCost = 'buyPetCost'; //购买消费
   static String fight1WinCount = 'fight1WinCount'; //战斗1赢的次数

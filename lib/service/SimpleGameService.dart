@@ -13,10 +13,8 @@ import '../web3/Web3Util.dart';
 
 class SimpleGameService {
   static Future<DeployedContract> simpleGameContract() async {
-    final contract = await ContractUtil.abiContract(
-        'simpleGame',
-        ConfigModel.getInstance().config(ConfigConstants.simpleGame),
-        'simpleGame');
+    final contract = await ContractUtil.abiContract('simpleGame',
+        ConfigModel.getInstance().config(ConfigConstants.game1), 'simpleGame');
     return contract;
   }
 

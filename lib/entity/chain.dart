@@ -13,9 +13,10 @@ class ChainConstant {
   static const String HT = 'HT';
   static const String BNB = 'BNB';
   static const String CET = 'CET';
+  static const String HOO = 'HOO';
 
   static List<String> supportChainList() {
-    List<String> list = [HT, BNB, CET];
+    List<String> list = [HT, BNB, CET, HOO];
     return list;
   }
 
@@ -45,6 +46,13 @@ class ChainConstant {
       symbolChainMap[symbol] = cet;
       return cet;
     }
-    return symbolChain(CET);
+    if (HOO == symbol) {
+      Chain hoo = Chain('HOO Smart Chain', symbol, 70);
+      hoo.rpcList = ['https://http-mainnet.hoosmartchain.com'];
+      hoo.configAddress = '0x60d4f8b0900b7a79fC8dD752157648f9d32fE9E8';
+      symbolChainMap[symbol] = hoo;
+      return hoo;
+    }
+    return symbolChain(HOO);
   }
 }
