@@ -50,6 +50,25 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "label",
+        "type": "string"
+      }
+    ],
+    "name": "labelData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string[]",
         "name": "labels",
         "type": "string[]"
@@ -93,6 +112,24 @@
       }
     ],
     "name": "setLabelAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "label",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLabelData",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
