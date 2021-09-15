@@ -83,6 +83,7 @@ class _UpgradeItem1State extends State<UpgradeItem1>
             ) +
             ' ' +
             ConfigConstants.gameTokenSymbol,
+        ConfigModel.getInstance().config(ConfigConstants.petUpgrade1),
       );
       String hash =
           await TransactionConfirmDialog.send(context, transactionInfo);
@@ -161,6 +162,7 @@ class _UpgradeItem1State extends State<UpgradeItem1>
       TransactionInfo transactionInfo = TransactionInfo(
         transaction,
         $t('授权 NFT'),
+        ConfigModel.getInstance().config(ConfigConstants.petUpgrade1),
       );
       String hash =
           await TransactionConfirmDialog.send(context, transactionInfo);

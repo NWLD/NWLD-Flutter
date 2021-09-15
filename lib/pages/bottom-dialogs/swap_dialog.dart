@@ -5,20 +5,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kingspro/constants/colors.dart';
 import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/entity/TokenPoolInfo.dart';
+import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/TokenPoolService.dart';
+import 'package:kingspro/service/TokenService.dart';
+import 'package:kingspro/service/TransactionService.dart';
 import 'package:kingspro/util/PeriodicTimer.dart';
 import 'package:kingspro/util/number_util.dart';
 import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/widgets/auto_fontSize_text.dart';
-import 'package:kingspro/widgets/base_bottom_dialog.dart';
+import 'package:kingspro/widgets/base_button.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
+import 'package:kingspro/widgets/toast_util.dart';
 import 'package:provider/provider.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../constants/sizes.dart';
 import '../../l10n/base_localizations.dart';
-import '../../widgets/touch_down_scale.dart';
 import 'bottom_dialog_container.dart';
 
 class SwapDialog extends StatefulWidget {
@@ -33,19 +39,57 @@ class _SwapDialogState extends State<SwapDialog>
   TextEditingController sellEditingController;
   String buyAmount;
   String sellAmount;
+  BigInt _allowance;
 
   @override
   void initState() {
     buyEditingController = TextEditingController();
     buyEditingController.addListener(() {
+      setBuyAmount();
+    });
+    sellEditingController = TextEditingController();
+    sellEditingController.addListener(() {
+      setSellAmount();
+    });
+    getInfo();
+    getAllowance();
+    super.initState();
+  }
+
+  void setSellAmount() {
+    if (null == tokenPoolInfo ||
+        BigInt.from(0) == tokenPoolInfo.sellPrice ||
+        StringUtils.isEmpty(sellEditingController.text)) {
+      setState(() {
+        sellAmount = '';
+      });
+      return;
+    }
+    setState(() {
+      String num =
+          (NumberUtil.pow(num: sellEditingController.text.trim(), exponent: 1) *
+                  tokenPoolInfo.sellPrice)
+              .toString();
+      sellAmount = NumberUtil.decimalNumString(num: num, fractionDigits: 6);
+    });
+  }
+
+  void setBuyAmount() {
+    if (null == tokenPoolInfo ||
+        BigInt.from(0) == tokenPoolInfo.buyPrice ||
+        StringUtils.isEmpty(buyEditingController.text)) {
       setState(() {
         buyAmount = '';
       });
-      estimateBuy();
+      return;
+    }
+    setState(() {
+      String num =
+          (NumberUtil.pow(num: buyEditingController.text.trim(), exponent: 36) /
+                  tokenPoolInfo.buyPrice)
+              .toString();
+      buyAmount = NumberUtil.decimalNumString(num: num, fractionDigits: 0);
     });
-    sellEditingController = TextEditingController();
-    getInfo();
-    super.initState();
   }
 
   PeriodicTimer _infoPeriodicTimer;
@@ -65,40 +109,8 @@ class _SwapDialogState extends State<SwapDialog>
           setState(() {
             tokenPoolInfo = info;
           });
-        }
-      },
-      onEnd: (max) {},
-    );
-  }
-
-  PeriodicTimer _estimateBuyPeriodicTimer;
-
-  void estimateBuy() {
-    if (null != _estimateBuyPeriodicTimer) {
-      return;
-    }
-    _estimateBuyPeriodicTimer = PeriodicTimer();
-    _estimateBuyPeriodicTimer.start(
-      milliseconds: 3000,
-      maxCount: 100000,
-      firstAction: true,
-      action: () async {
-        String input = buyEditingController.text.trim();
-        if (StringUtils.isEmpty(input)) {
-          setState(() {
-            buyAmount = '';
-          });
-          return;
-        }
-        BigInt estimateBuyAmount = await TokenPoolService.estimateBuy(input);
-        if (null == _estimateBuyPeriodicTimer) {
-          return;
-        }
-        if (input == buyEditingController.text.trim()) {
-          setState(() {
-            buyAmount = NumberUtil.decimalNumString(
-                num: estimateBuyAmount.toString(), fractionDigits: 0);
-          });
+          setSellAmount();
+          setBuyAmount();
         }
       },
       onEnd: (max) {},
@@ -111,10 +123,8 @@ class _SwapDialogState extends State<SwapDialog>
       _infoPeriodicTimer.cancel(false);
       _infoPeriodicTimer = null;
     }
-    if (null != _estimateBuyPeriodicTimer) {
-      _estimateBuyPeriodicTimer.cancel(false);
-      _estimateBuyPeriodicTimer = null;
-    }
+    _cancelBuyPeriodicTimer();
+    _cancelSellPeriodicTimer();
     super.dispose();
   }
 
@@ -180,10 +190,489 @@ class _SwapDialogState extends State<SwapDialog>
     );
   }
 
+  Widget buildInfo() {
+    return Row(
+      children: [
+        Expanded(
+          child: Consumer<AccountModel>(builder: (
+            BuildContext context,
+            AccountModel accountModel,
+            Widget child,
+          ) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildText($t("个人资产")),
+                buildText(NumberUtil.decimalNumString(
+                      num: accountModel.gameTokenBalance.toString(),
+                      fractionDigits: 0,
+                    ) +
+                    ' ' +
+                    ConfigConstants.gameTokenSymbol),
+                buildText(
+                  NumberUtil.decimalNumString(
+                        num: accountModel.balance.toString(),
+                        fractionDigits: 6,
+                      ) +
+                      ' ' +
+                      SettingsModel.getInstance().currentChain().symbol,
+                ),
+              ],
+            );
+          }),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildText($t("池子资产")),
+              buildText(NumberUtil.decimalNumString(
+                    num: tokenPoolInfo.tokenBalance.toString(),
+                    fractionDigits: 0,
+                  ) +
+                  ' ' +
+                  ConfigConstants.gameTokenSymbol),
+              buildText(
+                NumberUtil.decimalNumString(
+                      num: tokenPoolInfo.ethBalance.toString(),
+                      fractionDigits: 6,
+                    ) +
+                    ' ' +
+                    SettingsModel.getInstance().currentChain().symbol,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildBuyField() {
     return buildTextField(
       editingController: buyEditingController,
       height: 80.w,
+    );
+  }
+
+  PeriodicTimer _buyPeriodicTimer;
+
+  void confirmBuy(String hash) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _buyPeriodicTimer) {
+      return;
+    }
+    _buyPeriodicTimer = PeriodicTimer();
+    _buyPeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      action: () async {
+        try {
+          int hashStatus = await TransactionService.getStatus(hash);
+          if (null == _buyPeriodicTimer || 0 == hashStatus) {
+            return;
+          }
+          if (2 == hashStatus) {
+            _buyPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('买入失败'), type: ToastType.error);
+            return;
+          }
+          if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
+            _buyPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('买入成功'), type: ToastType.success);
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        EasyLoading.dismiss();
+        _cancelBuyPeriodicTimer();
+      },
+    );
+  }
+
+  void _cancelBuyPeriodicTimer() {
+    if (null != _buyPeriodicTimer) {
+      _buyPeriodicTimer.cancel(false);
+      _buyPeriodicTimer = null;
+    }
+  }
+
+  Widget buildBuyBoard() {
+    return Expanded(
+      child: ShadowContainer(
+        color: ColorConstant.titleBg,
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildText(
+              $t('价格') +
+                  ': ' +
+                  NumberUtil.decimalNumString(
+                    num: tokenPoolInfo.buyPrice.toString(),
+                    fractionDigits: 18,
+                  ),
+              EdgeInsets.all(0),
+            ),
+            SizedBox(
+              height: 10.w,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: buildBuyField(),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Container(
+                  width: 80.w,
+                  child: buildText(
+                    SettingsModel.getInstance().currentChain().symbol,
+                    EdgeInsets.all(0),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.w,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ShadowContainer(
+                    height: 80.w,
+                    color: Colors.transparent,
+                    padding: EdgeInsets.all(10.w),
+                    child: Container(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: buildText(buyAmount ?? "", EdgeInsets.all(0)),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Container(
+                  width: 80.w,
+                  child: buildText(
+                    ConfigConstants.gameTokenSymbol,
+                    EdgeInsets.all(0),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.w,
+            ),
+            BaseButton(
+              onTap: () async {
+                if (StringUtils.isEmpty(buyAmount)) {
+                  return;
+                }
+                try {
+                  Transaction transaction = await TokenPoolService.buy(
+                    buyEditingController.text.trim(),
+                  );
+                  TransactionInfo transactionInfo = TransactionInfo(
+                    transaction,
+                    buyEditingController.text.trim() +
+                        ' ' +
+                        SettingsModel.getInstance().currentChain().symbol,
+                  );
+                  String hash = await TransactionConfirmDialog.send(
+                      context, transactionInfo);
+                  if (StringUtils.isEmpty(hash)) {
+                    return;
+                  }
+                  setState(() {
+                    buyEditingController.text = '';
+                  });
+                  confirmBuy(hash);
+                } catch (e) {
+                  ToastUtil.showToast(e.toString(), type: ToastType.error);
+                }
+              },
+              title: $t('买入'),
+              width: 100.w,
+              height: 60.w,
+              bg: ColorConstant.bg_level_9,
+              color: ColorConstant.title,
+              fontSize: SizeConstant.h8,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSellField() {
+    return buildTextField(
+      editingController: sellEditingController,
+      height: 80.w,
+    );
+  }
+
+  void getAllowance() async {
+    if (StringUtils.isEmpty(AccountModel.getInstance().account)) {
+      return;
+    }
+    BigInt allowance = await TokenService.allowance(
+      ConfigModel.getInstance().config(ConfigConstants.tokenPool),
+    );
+    setState(() {
+      _allowance = allowance;
+    });
+  }
+
+  void approve() async {
+    try {
+      Transaction transaction = await TokenService.approve(
+        ConfigModel.getInstance().config(ConfigConstants.tokenPool),
+        NumberUtil.pow(num: '1000', exponent: 26),
+      );
+      TransactionInfo transactionInfo = TransactionInfo(
+        transaction,
+        $t('授权 ') +
+            NumberUtil.decimalNumString(
+              num: NumberUtil.pow(num: '1000', exponent: 26).toString(),
+            ) +
+            ' ' +
+            ConfigConstants.gameTokenSymbol,
+        ConfigModel.getInstance().config(ConfigConstants.tokenPool),
+      );
+      String hash =
+          await TransactionConfirmDialog.send(context, transactionInfo);
+      if (StringUtils.isEmpty(hash)) {
+        return;
+      }
+      confirmApprove(hash);
+    } catch (e) {
+      ToastUtil.showToast(e.toString(), type: ToastType.error);
+    }
+  }
+
+  PeriodicTimer _approvePeriodicTimer;
+
+  void confirmApprove(String hash) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _approvePeriodicTimer) {
+      return;
+    }
+    _approvePeriodicTimer = PeriodicTimer();
+    _approvePeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      action: () async {
+        try {
+          int hashStatus = await TransactionService.getStatus(hash);
+          if (null == _approvePeriodicTimer || 0 == hashStatus) {
+            return;
+          }
+          if (2 == hashStatus) {
+            _approvePeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('授权失败'), type: ToastType.error);
+            return;
+          }
+          if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
+            _approvePeriodicTimer.cancel(false);
+            setState(() {
+              _allowance = NumberUtil.pow(num: '1000', exponent: 26);
+            });
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        EasyLoading.dismiss();
+        _cancelApprovePeriodicTimer();
+      },
+    );
+  }
+
+  void _cancelApprovePeriodicTimer() {
+    if (null != _approvePeriodicTimer) {
+      _approvePeriodicTimer.cancel(false);
+      _approvePeriodicTimer = null;
+    }
+  }
+
+  PeriodicTimer _sellPeriodicTimer;
+
+  void confirmSell(String hash) async {
+    EasyLoading.show(dismissOnTap: true);
+    if (null != _sellPeriodicTimer) {
+      return;
+    }
+    _sellPeriodicTimer = PeriodicTimer();
+    _sellPeriodicTimer.start(
+      milliseconds: 3000,
+      maxCount: 100000,
+      action: () async {
+        try {
+          int hashStatus = await TransactionService.getStatus(hash);
+          if (null == _sellPeriodicTimer || 0 == hashStatus) {
+            return;
+          }
+          if (2 == hashStatus) {
+            _sellPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('卖出失败'), type: ToastType.error);
+            return;
+          }
+          if (1 == hashStatus) {
+            AccountModel.getInstance().getBalance();
+            _sellPeriodicTimer.cancel(false);
+            ToastUtil.showToast($t('卖出成功'), type: ToastType.success);
+          }
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        } finally {}
+      },
+      onEnd: (max) {
+        EasyLoading.dismiss();
+        _cancelBuyPeriodicTimer();
+      },
+    );
+  }
+
+  void _cancelSellPeriodicTimer() {
+    if (null != _sellPeriodicTimer) {
+      _sellPeriodicTimer.cancel(false);
+      _sellPeriodicTimer = null;
+    }
+  }
+
+  Widget buildSellBoard() {
+    return Expanded(
+      child: ShadowContainer(
+        color: ColorConstant.bg_level_9,
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildText(
+              $t('价格') +
+                  ': ' +
+                  NumberUtil.decimalNumString(
+                    num: tokenPoolInfo.sellPrice.toString(),
+                    fractionDigits: 18,
+                  ),
+              EdgeInsets.all(0),
+            ),
+            SizedBox(
+              height: 10.w,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: buildSellField(),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Container(
+                  width: 80.w,
+                  child: buildText(
+                    ConfigConstants.gameTokenSymbol,
+                    EdgeInsets.all(0),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.w,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ShadowContainer(
+                    height: 80.w,
+                    color: Colors.transparent,
+                    padding: EdgeInsets.all(10.w),
+                    child: Container(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: buildText(sellAmount ?? "", EdgeInsets.all(0)),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Container(
+                  width: 80.w,
+                  child: buildText(
+                    SettingsModel.getInstance().currentChain().symbol,
+                    EdgeInsets.all(0),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.w,
+            ),
+            Row(
+              children: [
+                Expanded(child: Container()),
+                buildSellButton(),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSellButton() {
+    if (null == _allowance ||
+        AccountModel.getInstance().gameTokenBalance > _allowance) {
+      return BaseButton(
+        onTap: approve,
+        title: $t('授权'),
+        width: 100.w,
+        height: 60.w,
+        bg: ColorConstant.titleBg,
+        color: ColorConstant.title,
+        fontSize: SizeConstant.h8,
+      );
+    }
+    return BaseButton(
+      onTap: () async {
+        if (StringUtils.isEmpty(sellAmount)) {
+          return;
+        }
+        try {
+          Transaction transaction = await TokenPoolService.sell(
+            sellEditingController.text.trim(),
+          );
+          TransactionInfo transactionInfo = TransactionInfo(
+            transaction,
+            sellEditingController.text.trim() +
+                ' ' +
+                ConfigConstants.gameTokenSymbol,
+          );
+          String hash =
+              await TransactionConfirmDialog.send(context, transactionInfo);
+          if (StringUtils.isEmpty(hash)) {
+            return;
+          }
+          setState(() {
+            sellEditingController.text = '';
+          });
+          confirmSell(hash);
+        } catch (e) {
+          ToastUtil.showToast(e.toString(), type: ToastType.error);
+        }
+      },
+      title: $t('卖出'),
+      width: 100.w,
+      height: 60.w,
+      bg: ColorConstant.titleBg,
+      color: ColorConstant.title,
+      fontSize: SizeConstant.h8,
     );
   }
 
@@ -196,92 +685,18 @@ class _SwapDialogState extends State<SwapDialog>
             ? Container()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildText($t("池子信息")),
-                  buildText(
-                    NumberUtil.decimalNumString(
-                          num: tokenPoolInfo.tokenBalance.toString(),
-                          fractionDigits: 0,
-                        ) +
-                        ' ' +
-                        ConfigConstants.gameTokenSymbol +
-                        " : " +
-                        NumberUtil.decimalNumString(
-                          num: tokenPoolInfo.ethBalance.toString(),
-                          fractionDigits: 4,
-                        ) +
-                        ' ' +
-                        SettingsModel.getInstance().currentChain().symbol,
-                  ),
-                  buildText(
-                    '1 ' +
-                        ConfigConstants.gameTokenSymbol +
-                        ' = ' +
-                        NumberUtil.decimalNumString(
-                          num: tokenPoolInfo.tokenPrice.toString(),
-                          fractionDigits: 18,
-                        ) +
-                        ' ' +
-                        SettingsModel.getInstance().currentChain().symbol,
-                  ),
-                  //购买
+                  buildInfo(),
                   Padding(
-                    padding: EdgeInsets.only(left: 40.w, right: 40.w),
+                    padding: EdgeInsets.only(left: 20.w, right: 20.w),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: buildBuyField(),
-                        ),
+                        buildBuyBoard(),
                         SizedBox(
-                          width: 10.w,
+                          width: 20.w,
                         ),
-                        buildText(
-                            SettingsModel.getInstance().currentChain().symbol,
-                            EdgeInsets.all(0)),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        TouchDownScale(
-                          child: ShadowContainer(
-                            width: 100.w,
-                            height: 60.w,
-                            color: ColorConstant.titleBg,
-                            child: Center(
-                              child: Text(
-                                $t('购买'),
-                                style: TextStyle(
-                                  color: ColorConstant.title,
-                                  fontSize: SizeConstant.h7,
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () async {
-                            if (StringUtils.isEmpty(buyAmount)) {
-                              return;
-                            }
-                            EasyLoading.show(dismissOnTap: true);
-                            //内置1%的滑点
-                            try {
-                              TokenPoolService.buy(
-                                  buyEditingController.text.trim(),
-                                  (BigInt.parse(buyAmount) *
-                                          BigInt.from(99) /
-                                          BigInt.from(100))
-                                      .toString());
-                            } catch (e) {} finally {
-                              EasyLoading.dismiss();
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Expanded(
-                          child: buildText(buyAmount ?? "", EdgeInsets.all(0)),
-                        ),
-                        buildText(
-                            ConfigConstants.gameTokenSymbol, EdgeInsets.all(0)),
+                        buildSellBoard(),
                       ],
                     ),
                   ),

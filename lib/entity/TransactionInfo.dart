@@ -4,8 +4,9 @@ import 'package:web3dart/web3dart.dart';
 class TransactionInfo {
   Transaction transaction;
   String value;
+  String approveAddress;
 
-  TransactionInfo(this.transaction, this.value);
+  TransactionInfo(this.transaction, this.value, [this.approveAddress]);
 
   String gasLabel() {
     BigInt gas =

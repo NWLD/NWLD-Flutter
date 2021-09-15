@@ -228,7 +228,7 @@ class _ShopItemState extends State<TokenShopItemWidget>
           Text(
             NumberUtil.decimalNumString(
                   num: _shopItem.price.toString(),
-                  fractionDigits: 4,
+                  fractionDigits: 6,
                 ) +
                 ' ' +
                 SettingsModel.getInstance().currentChain().symbol,

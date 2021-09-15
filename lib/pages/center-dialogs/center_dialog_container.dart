@@ -31,7 +31,7 @@ class CenterDialogContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(20.w),
           child: Container(
             width: 630.w,
-            color: ColorConstant.appBackground,
+            color: ColorConstant.title,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +60,7 @@ class CenterDialogContainer extends StatelessWidget {
                     content ?? "content",
                     textAlign: TextAlign.start,
                     style: TextStyle(
-                      color: ColorConstant.title,
+                      color: ColorConstant.bg_level_9,
                       fontSize: SizeConstant.h7,
                       height: 1.3,
                     ),

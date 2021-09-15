@@ -10,7 +10,7 @@ import 'package:kingspro/entity/TransactionInfo.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
-import 'package:kingspro/pages/bottom-dialogs/open_card_dialog.dart';
+import 'package:kingspro/pages/pet/open_card_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/transaction_confirm_dialog.dart';
 import 'package:kingspro/service/PetService.dart';
 import 'package:kingspro/service/PetShopService.dart';
@@ -120,6 +120,7 @@ class _ShopItemState extends State<PetShopItemWidget>
             ) +
             ' ' +
             ConfigConstants.gameTokenSymbol,
+        ConfigModel.getInstance().config(ConfigConstants.petShop),
       );
       String hash =
           await TransactionConfirmDialog.send(context, transactionInfo);

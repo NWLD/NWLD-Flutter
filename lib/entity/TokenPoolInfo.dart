@@ -1,7 +1,13 @@
 class TokenPoolInfo {
   BigInt tokenBalance;
   BigInt ethBalance;
-  BigInt tokenPrice;
+  BigInt buyPrice;
+  BigInt sellPrice;
 
-  TokenPoolInfo(this.tokenBalance, this.ethBalance, this.tokenPrice);
+  TokenPoolInfo(
+    this.tokenBalance,
+    this.ethBalance,
+    this.sellPrice,
+    this.buyPrice,
+  );
 }

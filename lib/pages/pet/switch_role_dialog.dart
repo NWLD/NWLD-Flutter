@@ -90,6 +90,7 @@ class _DialogState extends State<SwitchRoleDialog>
             ) +
             ' ' +
             ConfigConstants.gameTokenSymbol,
+        ConfigModel.getInstance().config(ConfigConstants.petSwitchRole),
       );
       String hash =
           await TransactionConfirmDialog.send(context, transactionInfo);
@@ -168,6 +169,7 @@ class _DialogState extends State<SwitchRoleDialog>
       TransactionInfo transactionInfo = TransactionInfo(
         transaction,
         $t('授权 NFT'),
+        ConfigModel.getInstance().config(ConfigConstants.petSwitchRole),
       );
       String hash =
           await TransactionConfirmDialog.send(context, transactionInfo);

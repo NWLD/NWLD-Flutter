@@ -8,6 +8,7 @@ import 'package:kingspro/entity/GameLevel.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
+import 'package:kingspro/pages/bottom-dialogs/swap_dialog.dart';
 import 'package:kingspro/pages/pet/assets_dialog.dart';
 import 'package:kingspro/pages/bottom-dialogs/login_dialog.dart';
 import 'package:kingspro/pages/pet/pet_shop_dialog.dart';
@@ -17,6 +18,7 @@ import 'package:kingspro/pages/bottom-dialogs/token_shop_dialog.dart';
 import 'package:kingspro/pages/game/game_dialog.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
+import 'package:kingspro/util/string_util.dart';
 import 'package:kingspro/web3/Web3Util.dart';
 import 'package:kingspro/widgets/base_bottom_dialog.dart';
 import 'package:kingspro/widgets/shadow_container.dart';
@@ -161,12 +163,10 @@ class _GameHomePageState extends State<GameHomePage>
                       padding: EdgeInsets.all(10.w),
                       color: ColorConstant.bg_level_9,
                       child: Center(
-                        child: Text(
-                          $t('设置'),
-                          style: TextStyle(
-                            color: ColorConstant.title,
-                            fontSize: SizeConstant.h9,
-                          ),
+                        child: Icon(
+                          Icons.menu_book_rounded,
+                          color: ColorConstant.title,
+                          size: 32.w,
                         ),
                       ),
                     ),
@@ -175,6 +175,9 @@ class _GameHomePageState extends State<GameHomePage>
               ),
               TouchDownScale(
                 onTap: () {
+                  if (StringUtils.isEmpty(accountModel.account)) {
+                    return;
+                  }
                   ClipboardData data =
                       new ClipboardData(text: accountModel.account);
                   Clipboard.setData(data);
@@ -184,7 +187,7 @@ class _GameHomePageState extends State<GameHomePage>
                   );
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(top: 6.w, bottom: 6.w),
+                  padding: EdgeInsets.only(top: 6.w, bottom: 6.w, right: 100.w),
                   child: AutoSizeText(
                     accountModel.account ?? '',
                     maxLines: 1,
@@ -201,54 +204,66 @@ class _GameHomePageState extends State<GameHomePage>
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          // alignment: AlignmentDirectional.center,
-                          child: AutoSizeText(
-                            null == accountModel.balance
-                                ? ''
-                                : NumberUtil.decimalNumString(
-                                      num: accountModel.balance.toString(),
-                                      fractionDigits: 4,
-                                    ) +
-                                    ' ' +
-                                    SettingsModel().currentChain().symbol,
-                            maxLines: 1,
-                            minFontSize: 10,
-                            style: TextStyle(
-                                fontSize: SizeConstant.h5,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 6.w,
-                        ),
-                        Container(
-                          // alignment: AlignmentDirectional.center,
-                          child: AutoSizeText(
-                            null == accountModel.gameTokenBalance
-                                ? ''
-                                : NumberUtil.decimalNumString(
-                                      num: accountModel.gameTokenBalance
-                                          .toString(),
-                                      fractionDigits: 0,
-                                    ) +
-                                    ' ' +
-                                    ConfigConstants.gameTokenSymbol,
-                            maxLines: 1,
-                            minFontSize: 10,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: SizeConstant.h5,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                    child: TouchDownScale(
+                      onTap: () {
+                        //资金池，保底回购
+                        if (!ConfigModel.getInstance().hasConfig) {
+                          return;
+                        }
+                        if (LoginDialog.shouldShow(context)) {
+                          return;
+                        }
+                        BottomDialog.showDialog(context, SwapDialog());
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            // alignment: AlignmentDirectional.center,
+                            child: AutoSizeText(
+                              null == accountModel.balance
+                                  ? ''
+                                  : NumberUtil.decimalNumString(
+                                        num: accountModel.balance.toString(),
+                                        fractionDigits: 6,
+                                      ) +
+                                      ' ' +
+                                      SettingsModel().currentChain().symbol,
+                              maxLines: 1,
+                              minFontSize: 10,
+                              style: TextStyle(
+                                  fontSize: SizeConstant.h5,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 6.w,
+                          ),
+                          Container(
+                            // alignment: AlignmentDirectional.center,
+                            child: AutoSizeText(
+                              null == accountModel.gameTokenBalance
+                                  ? ''
+                                  : NumberUtil.decimalNumString(
+                                        num: accountModel.gameTokenBalance
+                                            .toString(),
+                                        fractionDigits: 0,
+                                      ) +
+                                      ' ' +
+                                      ConfigConstants.gameTokenSymbol,
+                              maxLines: 1,
+                              minFontSize: 10,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: SizeConstant.h5,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   if (ConfigModel.getInstance().hasConfig)

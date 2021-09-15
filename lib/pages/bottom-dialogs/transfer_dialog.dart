@@ -244,7 +244,7 @@ class _TransferDialogState extends State<TransferDialog>
                       ? ''
                       : NumberUtil.decimalNumString(
                             num: accountModel.balance.toString(),
-                            fractionDigits: 4,
+                            fractionDigits: 6,
                           ) +
                           ' ' +
                           SettingsModel().currentChain().symbol,

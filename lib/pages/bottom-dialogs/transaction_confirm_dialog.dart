@@ -71,11 +71,17 @@ class _DialogState extends State<TransactionConfirmDialog>
                     ),
                   ),
                 ),
-                buildItem(
-                  '收款地址',
-                  widget.transactionInfo.transaction.to.hexEip55,
-                  null,
-                ),
+                null == widget.transactionInfo.approveAddress
+                    ? buildItem(
+                        '收款地址',
+                        widget.transactionInfo.transaction.to.hexEip55,
+                        null,
+                      )
+                    : buildItem(
+                        '授权地址',
+                        widget.transactionInfo.approveAddress,
+                        null,
+                      ),
                 buildItem(
                   '手续费',
                   widget.transactionInfo.gasLabel() +
