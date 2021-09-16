@@ -170,38 +170,6 @@ class _SettingDialogState extends State<SettingDialog>
             ver,
             () {},
           ),
-          TouchDownScale(
-            onTap: () {
-              BaseDialogContainer.showDialog(
-                context: context,
-                child: CenterDialogContainer(
-                  title: $t('退出账号'),
-                  content: $t('危险操作，请先备份私钥再退出，否则资产会永远消失！！！'),
-                  cancel: $t('取消'),
-                  confirm: $t('退出'),
-                  onConfirm: () {
-                    AccountModel.getInstance().exit();
-                  },
-                ),
-              );
-            },
-            child: ShadowContainer(
-              margin: EdgeInsets.only(
-                  left: 40.w, right: 40.w, bottom: 40.w, top: 60.w),
-              padding: EdgeInsets.only(left: 20.w, right: 20.w),
-              height: 96.w,
-              color: ColorConstant.title,
-              child: Center(
-                child: Text(
-                  '退出账号，请先备份私钥',
-                  style: TextStyle(
-                    color: ColorConstant.bg_level_9,
-                    fontSize: SizeConstant.h7,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

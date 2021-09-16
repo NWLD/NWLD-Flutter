@@ -82,22 +82,12 @@ class AccountModel extends ChangeNotifier {
 
   void getBalance() async {
     balance = await BalanceUtil.getBalance(account);
-    Chain chain = SettingsModel().currentChain();
     gameTokenBalance = await BalanceUtil.getERC20Balance(
       account,
       ConfigModel.getInstance().config(ConfigConstants.gameToken),
       ConfigModel.getInstance().config(ConfigConstants.gameTokenSymbol),
     );
     notifyListeners();
-  }
-
-  void exit() {
-    name = null;
-    account = null;
-    privateKey = null;
-    balance = null;
-    gameTokenBalance = null;
-    onStateChanged();
   }
 
   List<PetInfo> pets;
