@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 flutterVersionName = '1.0.2'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = rootProject.file("ops.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -36,10 +36,10 @@ android {
         debug {
         }
         release {
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//            storeFile rootProject.file('defi.keystore')
-//            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile rootProject.file('ops.keystore')
+            storePassword keystoreProperties['storePassword']
         }
     }
 
@@ -55,7 +55,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.kings.kingspro"
+        applicationId "com.kings.kingspro.ops"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
