@@ -3,7 +3,7 @@ class Chain {
   String symbol;
   List<String> rpcList;
   int chainId;
-  BigInt gasPrice = BigInt.from(100000000);
+  BigInt gasPrice = BigInt.from(1000000000);
 
   String configAddress; //配置合约地址
 
@@ -33,7 +33,7 @@ class ChainConstant {
       Chain okt = Chain('OKex Smart Chain', symbol, 66);
       okt.rpcList = ['https://exchainrpc.okex.org'];
       okt.configAddress = '0x4EBcD18d70527774a765fAdeCD8C30205EcB8eC8';
-      okt.gasPrice = BigInt.from(10000000);
+      okt.gasPrice = BigInt.from(300000000);
       symbolChainMap[symbol] = okt;
       return okt;
     }
