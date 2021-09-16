@@ -1,5 +1,6 @@
 import 'package:kingspro/entity/GasInfo.dart';
 import 'package:kingspro/models/account_model.dart';
+import 'package:kingspro/models/config_model.dart';
 import 'package:kingspro/models/settings_model.dart';
 import 'package:kingspro/util/log_util.dart';
 import 'package:kingspro/util/number_util.dart';
@@ -51,7 +52,11 @@ class TransactionService {
   static Future<GasInfo> estimateGas(Transaction transaction) async {
     final client = Web3Util().web3Client();
     //手续费价格
-    EtherAmount gasPrice = await client.getGasPrice();
+    // EtherAmount gasPrice = await client.getGasPrice();
+    EtherAmount gasPrice = EtherAmount.inWei(
+      ConfigModel.getInstance().gasPrice ??
+          SettingsModel().currentChain().gasPrice,
+    );
     transaction = transaction.copyWith(gasPrice: gasPrice);
 
     BigInt maxGas = await client.estimateGas(

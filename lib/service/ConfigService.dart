@@ -67,4 +67,25 @@ class ConfigService {
     LogUtil.log('getConfigs', map);
     return map;
   }
+
+  static Future<BigInt> getIntConfig(String label) async {
+    LogUtil.log('getIntConfig', 'start');
+    final client = Web3Util().web3Client();
+    final configContract = await ContractUtil.abiContract(
+      'config',
+      SettingsModel.getInstance().currentChain().configAddress,
+      'config',
+    );
+    final function = configContract.function('labelData');
+    List result = await client.call(
+      contract: configContract,
+      function: function,
+      params: [
+        label,
+      ],
+    );
+    BigInt value = result[0] as BigInt;
+    LogUtil.log('getIntConfig-end', value);
+    return value;
+  }
 }

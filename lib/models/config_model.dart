@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kingspro/constants/config.dart';
 import 'package:kingspro/models/account_model.dart';
 import 'package:kingspro/service/ConfigService.dart';
 
 class ConfigModel extends ChangeNotifier {
   static ConfigModel _instance;
   bool hasConfig = false;
+  BigInt gasPrice;
 
   static ConfigModel getInstance() {
     if (_instance == null) {
@@ -26,9 +28,17 @@ class ConfigModel extends ChangeNotifier {
   }
 
   void refresh() async {
+    getGasPrice();
     Map<String, String> configs = await ConfigService.getConfigs();
     updateConfig(configs);
     AccountModel.getInstance().getBalance();
+  }
+
+  getGasPrice() async {
+    BigInt price = await ConfigService.getIntConfig(ConfigConstants.gasPrice);
+    if (BigInt.from(0) != price) {
+      gasPrice = price;
+    }
   }
 
   updateConfig(Map<String, String> map) {

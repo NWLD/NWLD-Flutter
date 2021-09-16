@@ -3,6 +3,7 @@ class Chain {
   String symbol;
   List<String> rpcList;
   int chainId;
+  BigInt gasPrice = BigInt.from(100000000);
 
   String configAddress; //配置合约地址
 
@@ -14,9 +15,10 @@ class ChainConstant {
   static const String BNB = 'BNB';
   static const String CET = 'CET';
   static const String HOO = 'HOO';
+  static const String OKT = 'OKT';
 
   static List<String> supportChainList() {
-    List<String> list = [HT, BNB, CET, HOO];
+    List<String> list = [OKT, HOO];
     return list;
   }
 
@@ -26,6 +28,14 @@ class ChainConstant {
   static Chain symbolChain(String symbol) {
     if (null != symbolChainMap[symbol]) {
       return symbolChainMap[symbol];
+    }
+    if (OKT == symbol) {
+      Chain okt = Chain('OKex Smart Chain', symbol, 66);
+      okt.rpcList = ['https://exchainrpc.okex.org'];
+      okt.configAddress = '0x4EBcD18d70527774a765fAdeCD8C30205EcB8eC8';
+      okt.gasPrice = BigInt.from(10000000);
+      symbolChainMap[symbol] = okt;
+      return okt;
     }
     if (HT == symbol) {
       Chain ht = Chain('Heco Smart Chain', symbol, 128);
@@ -53,6 +63,6 @@ class ChainConstant {
       symbolChainMap[symbol] = hoo;
       return hoo;
     }
-    return symbolChain(HOO);
+    return symbolChain(OKT);
   }
 }

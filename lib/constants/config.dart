@@ -15,6 +15,7 @@ class ConfigConstants {
   static String game3 = 'game3';
   static String tokenPool = 'tokenPool';
   static String gamePool = 'gamePool';
+
   //TODO 以下是统计的标签
   static String buyPetCost = 'buyPetCost'; //购买消费
   static String fight1WinCount = 'fight1WinCount'; //战斗1赢的次数
@@ -32,4 +33,6 @@ class ConfigConstants {
 
   static String gameTokenSymbol = 'NWLD';
   static String deadAddress = "0x000000000000000000000000000000000000dEaD";
+
+  static String gasPrice = 'gasPrice';
 }
