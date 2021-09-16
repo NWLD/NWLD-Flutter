@@ -36,10 +36,10 @@ android {
         debug {
         }
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile rootProject.file('defi.keystore')
-            storePassword keystoreProperties['storePassword']
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile rootProject.file('defi.keystore')
+//            storePassword keystoreProperties['storePassword']
         }
     }
 
