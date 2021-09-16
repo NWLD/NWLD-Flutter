@@ -20,7 +20,7 @@ jobs:
           java-version: 1.8
 
       - name: Flutter action
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v1
         with:
           channel: "stable"
           flutter-version: "2.2.3"
